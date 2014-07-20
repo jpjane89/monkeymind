@@ -1,0 +1,13 @@
+#rdio-login {
+	border-radius: 500px;
+	font-size: 16px;
+	line-height: 1.5;
+	padding: 8px 25px 6px;
+	text-transform: uppercase;
+	border-width: 1px;
+	color: #fff;
+	background-color: #84bd00;
+	border-color: #84bd00;
+	font-family:  "proxima_nova",sans-serif;
+	font-weight: 400;
+}

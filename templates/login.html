@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="container">
+      <h1>Rdio Login</h1>
+        <button id="rdio-login" class="btn btn-primary">Login with Rdio</button>
+</div>
+
+<script type="text/javascript">
+
+function get_authorization_url() {
+
+    var url = $.get("/authorization_url",goto_authorization_url);
+} 
+
+function goto_authorization_url(url) {
+    window.location = url;
+
+}
+
+function main() {
+    var login_button = $("#rdio-login");
+    login_button.click(get_authorization_url);
+}
+
+
+$(main);
+</script>
+
+{% endblock %}
+

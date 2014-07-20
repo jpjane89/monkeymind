@@ -1,0 +1,51 @@
+  <div class="container">
+    <div id="login">
+      <h1>Spotify Playlist Endpoint Demo</h1>
+        <button id="login" class="btn btn-primary">Login with Spotify</button>
+    </div>
+    <div id="loggedin">
+        <div id="playlists">
+            <div id="playlists-list">
+            </div>
+            <div id="playlist-detail">
+            </div>
+        </div>
+        <div id="results"></div>
+    </div>
+  </div>
+
+<script id="playlists-list-template" type="text/x-handlebars-template">
+    <ul>
+    {{#each}}
+        <li>
+            <a href="#" class="load" data-link="{{href}}">{{name}}</a>
+        </li>
+    {{/each}}
+    </ul>
+</script>
+
+<script id="playlist-detail-template" type="text/x-handlebars-template">
+    <h2>{{name}}</h2>
+    <p>{{{description}}}</p>
+    {{#if images.length}}
+    <img style="background-image:url({{images.0.url}})" class="cover"/>
+    {{/if}}
+    <table>
+        <tr>
+            <th>Track</th>
+            <th>Artist</th>
+            <th>Album</th>
+        </tr>
+    {{#each tracks.items}}
+        <tr>
+            <td>{{track.name}}</td>
+            <td>
+                {{#each track.artists}}
+                    {{name}}
+                {{/each}}
+            </td>
+            <td>{{track.album.name}}</td>
+        </tr>
+    {{/each}}
+    </table>
+</script>

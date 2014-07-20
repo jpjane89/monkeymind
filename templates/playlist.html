@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<form class="form-signin" method="POST">
+	<label for="autocomplete">Select a playlist: </label>
+	<input id="autocomplete" name="playlist">
+	<button class="btn btn-sm btn-primary btn-block" type="submit">Submit</button>
+</form>
+
+<script type="text/javascript">
+
+function get_playlists() {
+    $.get("/ajax/playlists", add_to_autocomplete);
+}
+
+function add_to_autocomplete(data) {
+    var playlists = JSON.parse(data);
+    $("#autocomplete" ).autocomplete({
+    source: playlists
+            });
+}
+
+function main() {
+    get_playlists();
+
+}
+
+$(main);
+</script>
+
+{% endblock %}
