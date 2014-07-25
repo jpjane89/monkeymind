@@ -8,6 +8,8 @@ import requests
 import requests.auth
 import json
 import oauth2 as oauth
+import model
+import time
 
 app = Flask(__name__)
 app.secret_key = 'secret key'
@@ -18,47 +20,86 @@ CONSUMER_SECRET = 'S9X2mnMEcQ';
 
 socketio = SocketIO(app)
 
-# @socketio.on('connect', namespace= '/test')
-# def stream():
-#   print "websocket connected"
+@socketio.on('connect', namespace= '/test')
+def stream():
 
-#   smooth_values = []
-#   cumulative_sum = 0
+  print "websocket connected"
 
-#   v = mind_echo.start_stream()
-#   smooth_values.append(v)
-#   cumulative_sum += v
-#   interpretation = None
+  start = mind_echo.start_stream()
+  data = mind_echo.continue_stream(start)
+  print "first value"
+  emit('first value', data)
 
-#   while True:
-#     data = mind_echo.continue_stream(smooth_values)
 
-#     print len(smooth_values)
-    
-#     if len(smooth_values) < 150:
-#       interpretation = mind_echo.interpret_value(cumulative_sum, smooth_values)
-#       cumulative_sum += data
-#       smooth_values.append(data)
-
-#     elif len(smooth_values) == 150:
-#       interpretation = mind_echo.interpret_value(cumulative_sum, smooth_values)
-#       cumulative_sum -= smooth_values.pop(0)
-#       cumulative_sum += data
-#       smooth_values.append(data)
-
-#     print data
-#     emit('new value', data)
-#     if interpretation:
-#       print interpretation
-#       emit('interpretation', interpretation)
+  while True:
+    data = mind_echo.continue_stream(start)
+    emit('new value', data)
+    start = data
     
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("brainwave.html")
+
+@app.route("/login", methods=["GET"])
+def show_login():
+    # if session.get("user"):
+    #     return redirect("/movie_list")
+    return render_template("login.html")
+
+@app.route("/login", methods=["POST"])
+def process_login():
+
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    user = model.db.query(model.User).filter_by(email = email).first()
+
+    if user and password == user.password:
+        session['user'] = user.email
+        session['user_id'] = user.id
+        flash ("Welcome %s!" % email)
+        return redirect("/welcome")
+    elif user and password != user.password:
+        flash ("Incorrect password.")
+        return redirect("/login")
+    else:
+        flash ("Please register with MonkeyMind")
+        return redirect("/register")
+
+@app.route("/register", methods=["GET"])
+def show_register():
+    return render_template("register.html")
+
+@app.route("/register", methods=["POST"])
+def process_register():
+
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    new_user = model.User(email=email, password=password)
+    model.db.add(new_user)
+    model.db.commit()
+
+    session['user'] = email
+    user = model.db.query(model.User).filter_by(email=email).one()
+    session['user_id'] = user.id
+    flash ("Welcome %s!" % email)
+
+    return redirect("/welcome")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+
+    return redirect("/login")
 
 @app.route('/rdio_login')
-def login():
-  return render_template('login.html')
+def rdio_login():
+  return render_template('rdio_login.html')
+
+@app.route('/welcome')
+def welcome():
+  return render_template('progress.html')
 
 @app.route('/authorization_url')
 def make_authorization_url():
@@ -75,7 +116,7 @@ def make_authorization_url():
 
   return url
   
-@app.route('/rdio_callback')
+@app.route('/rdio_callback', methods=["GET"])
 def rdio_callback():
 
   oauth_verifier = request.args.get('oauth_verifier')
@@ -110,15 +151,33 @@ def get_playlists():
 
   playlists = owned_playlists + collab_playlists + subscribed_playlists
 
-  playlist_names = []
+  session['playlists'] = {}
+
   for item in playlists:
-    playlist_names.append(item['name'])
+    session['playlists'][item['name']]=item['key']
 
-  return json.dumps(playlist_names)
+  return json.dumps(session['playlists'].keys())
 
-@app.route('/rdio_player')
-def rdio_player():
+@app.route('/rdio_callback', methods=["POST"])
+def get_playlist():
+
+  playlist_name = request.form.get("playlist")
+
+  print playlist_name
+
+  playlist_id = session['playlists'].get(playlist_name)
+
+  print session['playlists']
+
+  session['chosen_playlist'] = playlist_id
+
   return render_template('rdio_player.html')
+
+@app.route('/ajax/rdio_player')
+def rdio_player():
+
+  print session['chosen_playlist']
+  return json.dumps(session['chosen_playlist'])
 
 @app.route('/ajax/getPlaybackToken')
 def get_playback_token():
@@ -126,7 +185,7 @@ def get_playback_token():
   consumer = oauth.Consumer(CONSUMER_KEY, CONSUMER_SECRET)
 
   client = oauth.Client(consumer, access_token)
-  response = client.request('http://api.rdio.com/1/', 'POST', urllib.urlencode({'method': 'getPlaybackToken'}))
+  response = client.request('http://api.rdio.com/1/', 'POST', urllib.urlencode({'method': 'getPlaybackToken', 'domain': 'localhost'}))
   json_response = json.loads(response[1])
 
   playback_token = json_response['result']

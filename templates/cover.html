@@ -16,7 +16,6 @@
             }
         </style>
     </head>
-    
     <body>
 
     <div class="site-wrapper">
@@ -25,8 +24,10 @@
           <div class="inner cover">
               <img src="/static/img/monkey-base.png">
               <h1 class="cover-heading">Monkey Mind</h1>
-            <a href="/login" class="btn btn-lg btn-default">Get Started</a> 
-
+            <a href="/login" class="btn btn-lg btn-default">Log In</a> 
+            <hr/>
+            <div> Not a user? <a href="{{ url_for('show_register') }}">Register a new account</a> </div>
+            </p>
           </div>
           <div class="mastfoot">
             <div class="inner">

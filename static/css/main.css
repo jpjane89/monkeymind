@@ -1,13 +1,62 @@
+body {
+	font-family: 'Open Sans', sans-serif;
+}
+
+a{
+  color: #428bca;
+}
+
+.btn-success {
+	color: #fff;
+	background-color: #5cb85c;
+	border-color: #4cae4c;
+}
+
 #rdio-login {
 	border-radius: 500px;
 	font-size: 16px;
 	line-height: 1.5;
 	padding: 8px 25px 6px;
-	text-transform: uppercase;
 	border-width: 1px;
-	color: #fff;
-	background-color: #84bd00;
-	border-color: #84bd00;
-	font-family:  "proxima_nova",sans-serif;
-	font-weight: 400;
+	color: white;
+	background-color: #008fd5;
+	border-color: #008fd5;
+	font-family:  "Whitney SSm 5r","lucida grande",tahoma,verdana,arial,sans-serif;
+	font-weight: 100;
 }
+
+div#player {
+	position:absolute;
+	margin-left:700px;
+}
+
+div#player-details {
+	margin-left:200px;
+}
+
+svg {
+    font: 16px sans-serif;
+  }
+
+  .line {
+    fill: none;
+    stroke: #000;
+    stroke-width: 1.5px;
+  }
+
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+
+  #interpretation {
+    position: absolute;
+    width: 50px;
+    height:50px;
+    /*background-color: red;*/
+    margin-left: 800px;
+    margin-top: 20px;
+    /*display: none;*/
+  }

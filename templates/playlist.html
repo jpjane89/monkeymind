@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
+
 {% block body %}
 
 <form class="form-signin" method="POST">
-	<label for="autocomplete">Select a playlist: </label>
+	<label for="autocomplete">Select your playlist: </label>
 	<input id="autocomplete" name="playlist">
-	<button class="btn btn-sm btn-primary btn-block" type="submit">Submit</button>
+	<button class="btn btn-success ">Submit</button>
 </form>
+
+{% endblock %}
+
+
+{% block script %}
 
 <script type="text/javascript">
 
@@ -22,7 +28,6 @@ function add_to_autocomplete(data) {
 
 function main() {
     get_playlists();
-
 }
 
 $(main);
