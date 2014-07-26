@@ -2,11 +2,12 @@
 
 {% block body %}
 
-<form class="form-signin" method="POST">
-	<label for="autocomplete">Select your playlist: </label>
-	<input id="autocomplete" name="playlist">
-	<button class="btn btn-success ">Submit</button>
-</form>
+<div class="welcome-banner">
+    <form class="options-form" method="POST">
+      <label for="autocomplete" id= 'options-label' >First, select a playlist for your session: </label>
+      <input id="autocomplete" name="playlist"> <button id="playlist-submit" class="btn btn-success">Submit</button>
+    </form>
+</div>
 
 {% endblock %}
 

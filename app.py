@@ -38,68 +38,11 @@ def stream():
     
 @app.route("/")
 def index():
-    return render_template("brainwave.html")
+    return render_template("index.html")
 
-@app.route("/login", methods=["GET"])
+@app.route("/login")
 def show_login():
-    # if session.get("user"):
-    #     return redirect("/movie_list")
-    return render_template("login.html")
-
-@app.route("/login", methods=["POST"])
-def process_login():
-
-    email = request.form.get("email")
-    password = request.form.get("password")
-
-    user = model.db.query(model.User).filter_by(email = email).first()
-
-    if user and password == user.password:
-        session['user'] = user.email
-        session['user_id'] = user.id
-        flash ("Welcome %s!" % email)
-        return redirect("/welcome")
-    elif user and password != user.password:
-        flash ("Incorrect password.")
-        return redirect("/login")
-    else:
-        flash ("Please register with MonkeyMind")
-        return redirect("/register")
-
-@app.route("/register", methods=["GET"])
-def show_register():
-    return render_template("register.html")
-
-@app.route("/register", methods=["POST"])
-def process_register():
-
-    email = request.form.get("email")
-    password = request.form.get("password")
-
-    new_user = model.User(email=email, password=password)
-    model.db.add(new_user)
-    model.db.commit()
-
-    session['user'] = email
-    user = model.db.query(model.User).filter_by(email=email).one()
-    session['user_id'] = user.id
-    flash ("Welcome %s!" % email)
-
-    return redirect("/welcome")
-
-@app.route("/logout")
-def logout():
-    session.clear()
-
-    return redirect("/login")
-
-@app.route('/rdio_login')
-def rdio_login():
-  return render_template('rdio_login.html')
-
-@app.route('/welcome')
-def welcome():
-  return render_template('progress.html')
+    return render_template("rdio_login.html")
 
 @app.route('/authorization_url')
 def make_authorization_url():
@@ -114,16 +57,27 @@ def make_authorization_url():
   session['oauth_token_secret'] = oauth_token_secret
   url = parsed_content['login_url'] + '?oauth_token=' + oauth_token
 
-  return url
+  return redirect(url)
   
-@app.route('/rdio_callback', methods=["GET"])
+@app.route('/rdio_callback')
 def rdio_callback():
 
+  request_token = verify_request_token()
+  get_oauth_token(request_token)
+  get_user_info()
+
+  return redirect('/welcome')
+
+def verify_request_token():
+  print "got to first def"
   oauth_verifier = request.args.get('oauth_verifier')
   request_token = oauth.Token(session['oauth_token'], session['oauth_token_secret'])
   request_token.set_verifier(oauth_verifier)
-  consumer = oauth.Consumer(CONSUMER_KEY, CONSUMER_SECRET)
+  return request_token
 
+def get_oauth_token(request_token):
+  print "got to second def"
+  consumer = oauth.Consumer(CONSUMER_KEY, CONSUMER_SECRET)
   client = oauth.Client(consumer, request_token)
   response, content = client.request('http://api.rdio.com/oauth/access_token', 'POST')
   parsed_content = dict(cgi.parse_qsl(content))
@@ -131,6 +85,42 @@ def rdio_callback():
   oauth_token_secret = parsed_content['oauth_token_secret']
   session['oauth_token'] = oauth_token
   session['oauth_token_secret'] = oauth_token_secret
+
+def get_user_info():
+  print "got to third def"
+  access_token = oauth.Token(session['oauth_token'],session['oauth_token_secret'])
+  consumer = oauth.Consumer(CONSUMER_KEY, CONSUMER_SECRET)
+
+  client = oauth.Client(consumer, access_token)
+  response = client.request('http://api.rdio.com/1/', 'POST', urllib.urlencode({'method': 'currentUser'}))
+  json_response = json.loads(response[1])
+  rdio_id = json_response['result']['key']
+  first_name = json_response['result']['firstName']
+
+  session['user'] = rdio_id
+  session['user_name'] = first_name
+
+def check_user():
+
+  rdio_id = session['user']
+  first_name = session['user_name']
+
+  user = model.db.query(model.User).filter_by(rdio_id=rdio_id).one()
+
+  if not user:
+    new_user = model.User(rdio_id=rdio_id, first_name=first_name)
+    model.db.add(new_user)
+    model.db.commit() 
+
+@app.route('/welcome')
+def welcome():
+
+  first_name = session['user_name']
+
+  return render_template('welcome.html', name=first_name)
+
+@app.route('/playlist')
+def start_session():
 
   return render_template('playlist.html')
 
@@ -141,7 +131,6 @@ def get_playlists():
 
   client = oauth.Client(consumer, access_token)
   response = client.request('http://api.rdio.com/1/', 'POST', urllib.urlencode({'method': 'currentUser'}))
-  user = response[1]
   response = client.request('http://api.rdio.com/1/', 'POST', urllib.urlencode({'method': 'getPlaylists'}))
   json_response = json.loads(response[1])
 
@@ -158,20 +147,18 @@ def get_playlists():
 
   return json.dumps(session['playlists'].keys())
 
-@app.route('/rdio_callback', methods=["POST"])
+@app.route('/playlist', methods=["POST"])
 def get_playlist():
 
   playlist_name = request.form.get("playlist")
 
-  print playlist_name
-
-  playlist_id = session['playlists'].get(playlist_name)
-
-  print session['playlists']
-
-  session['chosen_playlist'] = playlist_id
-
-  return render_template('rdio_player.html')
+  if playlist_name != '':
+    playlist_id = session['playlists'].get(playlist_name)
+    session['chosen_playlist'] = playlist_id
+    return render_template('time_player.html')
+  else:
+    flash ("No playlist entered. Try again")
+    return redirect('/playlist')
 
 @app.route('/ajax/rdio_player')
 def rdio_player():

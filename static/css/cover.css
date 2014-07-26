@@ -137,6 +137,7 @@ body {
   }
   .mastfoot {
     position: fixed;
+    color: black;
     bottom: 0;
   }
   /* Start the vertical centering */

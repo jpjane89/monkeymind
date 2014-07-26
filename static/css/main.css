@@ -6,28 +6,39 @@ a{
   color: #428bca;
 }
 
-.btn-success {
-	color: #fff;
-	background-color: #5cb85c;
-	border-color: #4cae4c;
+.welcome-banner {
+  position: absolute;
+  margin-left:0px;
+
+}
+#options-label {
+  font-size: 22px;
 }
 
-#rdio-login {
-	border-radius: 500px;
-	font-size: 16px;
-	line-height: 1.5;
-	padding: 8px 25px 6px;
-	border-width: 1px;
-	color: white;
-	background-color: #008fd5;
-	border-color: #008fd5;
-	font-family:  "Whitney SSm 5r","lucida grande",tahoma,verdana,arial,sans-serif;
-	font-weight: 100;
+#start-session-btn {
+  margin-left: 920px;
+  margin-top: 20px;
+  background-color:#008fd5;
+  border-color:#008fd5;
+  color:white;
 }
 
-div#player {
+.options-form {
+  margin-left:50px;
+  margin-top: 35%;
+}
+
+.nav.navbar-nav.navbar-right {
+  color:#D3D3D3;
+  font-size: 14px;
+  padding:0px;
+  height:60px;
+  font-style: italic;
+}
+
+div#player-container{
 	position:absolute;
-	margin-left:700px;
+	margin-left:50px;
 }
 
 div#player-details {

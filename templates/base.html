@@ -20,11 +20,8 @@
             <div class="container">
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="/">Home</a>
-                        {% if session.get('user') %}
-                        <li><a href="/logout">Log Out</a></li>
-                        {% else %}
-                        <li><a href="/login">Log In</a></li>
+                        {% if session.get('user_name') %}
+                        <li><a href="/">Logged in as {{ session.get('user_name') }}</a></li>
                         {% endif %}
                     </ul>
                 </div>
@@ -47,7 +44,4 @@
         </div>
 
     </body>
-
-    {% block script %} {% endblock %}
-
 </html>

@@ -20,7 +20,7 @@ function playlistMain() {
 
   $('#api').bind('ready.rdio', function() {
     // var key = sessionStorage.playlistKey.replace(/"/g,"");
-    $(this).rdio().play('p10269456');
+    // $(this).rdio().play('p10269456');
   });
 
   $('#api').bind('playingTrackChanged.rdio', function(e, playingTrack, sourcePosition) {

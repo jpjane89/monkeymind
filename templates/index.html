@@ -6,6 +6,7 @@
         <title>MonkeyMind</title>
         <style>
             body {
+                background-image: url("/static/img/spirals.jpg");
                 background-size: cover;
                 -webkit-background-size: cover;
                 -moz-background-size: cover;
@@ -23,10 +24,9 @@
       <div class="site-wrapper-inner">
         <div class="cover-container">
           <div class="inner cover">
-              <img src="/static/img/monkey-base.png">
+              <!-- <img src="/static/img/monkey-base.png"> -->
               <h1 class="cover-heading">Monkey Mind</h1>
-            <a href="/login" class="btn btn-lg btn-default">Get Started</a> 
-
+            <a href="{{ url_for('make_authorization_url') }}" class="btn btn-lg btn-default">Log in with Rdio</a>
           </div>
           <div class="mastfoot">
             <div class="inner">
