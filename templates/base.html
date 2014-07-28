@@ -15,18 +15,11 @@
     </head>
 
     <body>
-
-        <div class="navbar navbar-inverse navbar-static-top">
-            <div class="container">
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav navbar-right">
-                        {% if session.get('user_name') %}
-                        <li><a href="/">Logged in as {{ session.get('user_name') }}</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-        </div>
+        <nav class="navbar navbar-inverse" role="navigation">
+                <nav class="navbar-collapse collapse">
+                    {% block header %} {% endblock %}
+                </nav>
+        </nav>
 
         <div class="container">
             {% with messages = get_flashed_messages() %}

@@ -16,11 +16,11 @@ function return_playlist_key(data) {
 
 function playlistMain() {
 
-  // get_playlist_key();
+  get_playlist_key();
 
   $('#api').bind('ready.rdio', function() {
-    // var key = sessionStorage.playlistKey.replace(/"/g,"");
-    // $(this).rdio().play('p10269456');
+    var key = sessionStorage.playlistKey.replace(/"/g,"");
+    $(this).rdio().play(key);
   });
 
   $('#api').bind('playingTrackChanged.rdio', function(e, playingTrack, sourcePosition) {
@@ -38,7 +38,7 @@ function playlistMain() {
   });
 
   $('#api').bind('playStateChanged.rdio', function(e, playState) {
-    if (playState == 0) { // paused
+    if (playState === 0) { // paused
       $('#play').show();
       $('#pause').hide();
     } else {
@@ -56,21 +56,4 @@ function playlistMain() {
   $('#pause').click(function() { $('#api').rdio().pause(); });
   $('#next').click(function() { $('#api').rdio().next(); });
 
-  // socket.on('interpretation', function(value) {
-  //     // $('#api').rdio().pause();
-  //     // setTimeout($('#api').rdio().play('p10269456'),3000);
-  //     console.log(value);
-  //   });
-
-  // socket.on('time_elapsed', function(time) {
-  //     $('#api').rdio().pause();
-  //     setTimeout($('#api').rdio().play(),1);
-  //     console.log(time);
-  // });
 }
-
-$(document).ready(function () {
-  playlistMain();
-});
-
-

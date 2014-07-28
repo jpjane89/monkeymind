@@ -19,17 +19,49 @@ CONSUMER_KEY = '8xjysrrzyxyr7ca6m9uqmczz';
 CONSUMER_SECRET = 'S9X2mnMEcQ';
 
 socketio = SocketIO(app)
+hs = None
 
 @socketio.on('connect', namespace= '/test')
-def stream():
+def send_connection_status():
+
+  global hs
 
   print "websocket connected"
 
+  time.sleep(10)
+
+  hs = mind_echo.set_global_headset()
+
+  print "got here"
+
+  time.sleep(0.5)
+  if hs.get_state() != 'connected':
+      hs.disconnect()
+
+  while hs.get_state() != 'connected':
+    time.sleep(0.5)
+    hs.connect()
+    connection_status = hs.get_state()
+    print connection_status
+    print "checking status"
+    emit('connection status', connection_status)
+
+  emit('connection status','connected!')
+  time.sleep(0.5)
+
+@socketio.on('disconnect', namespace= '/test')
+def disconnect_headset():
+  global hs
+  hs.disconnect()
+  print "disconnected"
+
+@socketio.on('readyMessage', namespace= '/test')
+def stream_data(message):
+  global hs
+  
   start = mind_echo.start_stream()
   data = mind_echo.continue_stream(start)
-  print "first value"
   emit('first value', data)
-
 
   while True:
     data = mind_echo.continue_stream(start)
@@ -155,7 +187,7 @@ def get_playlist():
   if playlist_name != '':
     playlist_id = session['playlists'].get(playlist_name)
     session['chosen_playlist'] = playlist_id
-    return render_template('time_player.html')
+    return render_template('headset_connection.html')
   else:
     flash ("No playlist entered. Try again")
     return redirect('/playlist')

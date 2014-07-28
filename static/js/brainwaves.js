@@ -149,54 +149,42 @@ function calculateIntegral(rawEeg) {
   rawEegArray = [];
 }
 
-function main() {
-
-  var namespace = '/test';
-  var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
-  var duration = 1;
-
-  socket.on('first value', function(data) {
-    console.log('first value');
-    START_TIME = Date.now();
-    IgnorePhaseTimeStamp = START_TIME + 10000;
-    BaseLinePhase1TimeStamp = START_TIME + 40000;
-    BaseLinePhase2TimeStamp = START_TIME + 160000;
-  });
-
-  socket.on('new value', function(data) {
-
-    tick(data);
-
-    time = Date.now();
-
-    if (time < IgnorePhaseTimeStamp) {
-      CURRENT_STATE = null;
-    }
-    else if (time < BaseLinePhase1TimeStamp) {
-      CURRENT_STATE = baseline1;
-      rawEegArray.push(data);
-    }
-    else if (time < BaseLinePhase2TimeStamp) {
-      if (CURRENT_STATE == baseline1) {
-        baseline1();
-        CURRENT_STATE = listenState;
-      }
-      else {
-        CURRENT_STATE(data);
-      }
-    }
-    else {
-      if (!BASELINE_COMPLETE) {
-        baseline2();
-      }
-      else {
-        CURRENT_STATE(data);
-      }
-    }
-  });
+function start_data(data) {
+  console.log('first value');
+  START_TIME = Date.now();
+  IgnorePhaseTimeStamp = START_TIME + 10000;
+  BaseLinePhase1TimeStamp = START_TIME + 40000;
+  BaseLinePhase2TimeStamp = START_TIME + 160000;
 }
 
-$(document).ready(function () {
-  main();
-});
+function stream_data(data) {
+  console.log(data);
+  tick(data);
 
+  time = Date.now();
+
+  if (time < IgnorePhaseTimeStamp) {
+    CURRENT_STATE = null;
+  }
+  else if (time < BaseLinePhase1TimeStamp) {
+    CURRENT_STATE = baseline1;
+    rawEegArray.push(data);
+  }
+  else if (time < BaseLinePhase2TimeStamp) {
+    if (CURRENT_STATE == baseline1) {
+      baseline1();
+      CURRENT_STATE = listenState;
+    }
+    else {
+      CURRENT_STATE(data);
+    }
+  }
+  else {
+    if (!BASELINE_COMPLETE) {
+      baseline2();
+    }
+    else {
+      CURRENT_STATE(data);
+    }
+  }
+}

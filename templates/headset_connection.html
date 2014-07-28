@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block header %}
+
+<div>
+<p class="left-message">Connect Your Headset</p>
+</div>
+
+<div class = 'right-header'>
+  <span id = "connection-status-text">Connection status:</span>   <div id="connection-status">Waiting for signal</div>
+<div>
+
+{% endblock %}
+
+{% block body %}
+
+<div class="jumbotron">
+  <h1>You're connected!</h1>
+  <div>
+  <p>Spend a moment thinking about your goals for this session before beginning.</br>
+    Take a few deep breaths and press "Start" when you are ready.</p>
+  </div>
+  <p><a id= 'start-session' class="btn btn-primary btn-lg" role="button">Start</a></p>
+</div>
+
+<div class = 'sidebar-nav'>
+  <div class = 'sidebar-nav-header'>
+    <li>Now Playing:</li>
+  </div>
+  <hr id = 'sidebar-nav-separator-top'>
+  <div id='player-container'>
+    <div id="api"></div>
+    <img id="art" src="" height="200" width="200" style="float:left;margin-right:20px;">
+    <div>
+      <div><b>Track: </b><span id="track"></span></div>
+      <div><b>Album: </b><span id="album"></span></div>
+      <div><b>Artist: </b><span id="artist"></span></div>
+      <div><b>Position: </b>
+        <span style="display:inline-block;width:200px;border:1px solid black;">
+          <span id="position" style="display:inline-block;background-color:#666">&nbsp;</span>
+        </span></div>
+      <div>
+        <button id="previous">&lt;&lt;</button>
+        <button id="play">|&gt;</button>
+        <button id="pause">||</button>
+        <button id="next">&gt;&gt;</button>
+      </div>
+    </div>
+  </div>
+  <div class = 'sidebar-nav-footer'>
+    <li>Time Elapsed:</li>
+  </div>
+   <hr id ='sidebar-nav-separator-bottom'>
+   <div id="time-elapsed">0:00</div>
+</div>
+
+<div id = 'script-container'>
+
+  <script src="/static/js/brainwaves.js"></script>
+  <script src="/static/js/rdio_player.js"></script>
+
+</div>
+
+<script>
+
+var socket = null;
+
+function display_status(data) {
+  var connection_text = $("#connection-status");
+    connection_text.html(data);
+
+    if (data=='standby') {
+      connection_text.css('backgroundColor','#FCDC3B');
+    }
+    else if (data=='connected!') {
+      connection_text.css('backgroundColor','#66CD00');
+      jumbotron();
+    }
+    else {
+      connection_text.css('backgroundColor','#ff1a1a')
+    }
+}
+
+function jumbotron() {
+  var jumbotron = $('.jumbotron')
+  jumbotron.show();
+
+  var startButton = $("#start-session")
+  startButton.click(start_session)
+}
+
+function insertScript(script, container) {
+    var elem = document.createElement('script');
+    elem.type = 'text/javascript';
+    elem.src = '/static/js/' + script + '.js';
+    container.append(elem);
+}
+
+function start_session() {
+  var jumbotron = $('.jumbotron')
+  jumbotron.hide();
+
+  $('.sidebar-nav').show();
+  playlistMain();
+
+  scriptContainer = $("#script-container");
+  insertScript('d3chart',scriptContainer);
+
+
+  socket.emit('readyMessage', 'ready');  
+}
+
+function connection_main() {
+
+  var namespace = '/test';
+  socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+  var duration = 1;
+
+  socket.on('connection status', display_status);
+
+  socket.on('first value', start_data);
+  
+  socket.on('new value', stream_data);
+
+}
+
+$(document).ready(function () {
+  connection_main();
+});
+
+
+</script>
+
+{% endblock %}

@@ -1,18 +1,17 @@
 {% extends 'base.html' %}
 
-{% block body %}
+{% block header %}
 
-<div class="welcome-banner">
-    <form class="options-form" method="POST">
-      <label for="autocomplete" id= 'options-label' >First, select a playlist for your session: </label>
-      <input id="autocomplete" name="playlist"> <button id="playlist-submit" class="btn btn-success">Submit</button>
+<div class = 'playlist-header'>
+    <form class="options-form"  method="POST">
+      <label for="autocomplete" id= 'options-label' >Select a playlist for your session: </label>
+      <input id="autocomplete" name="playlist"> <button id="playlist-submit" class="btn btn-default">Submit</button>
     </form>
 </div>
 
 {% endblock %}
 
-
-{% block script %}
+{% block body %}
 
 <script type="text/javascript">
 

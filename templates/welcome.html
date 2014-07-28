@@ -1,14 +1,10 @@
 {% extends 'base.html' %}
 
-{% block body %}
-
-<div class="welcome-banner">
-    <h1>Welcome, {{ name }}!</h1>
-</div>
-<div><a href="/playlist" id = "start-session-btn" class="btn btn-default btn-lg active" role="button"><span class="glyphicon glyphicon-headphones"></span> Start a New Session</a>
+{% block header %}
+<div>
+<a href="/" class="left-message">Hello, {{ session.get('user_name') }}!</a>
 </div>
 
-<div class="progress-container">
-	</div>
-
+<div class = 'right-header' ><a href="/playlist" id = "start-session-btn" class="btn btn-default btn active" role="button"><span class="glyphicon glyphicon-headphones"></span> Start a New Session</a>
+</div>
 {% endblock %}
