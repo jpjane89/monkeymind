@@ -53,6 +53,7 @@ def send_connection_status():
 def disconnect_headset():
   global hs
   hs.disconnect()
+  hs.destroy()
   print "disconnected"
 
 @socketio.on('readyMessage', namespace= '/test')

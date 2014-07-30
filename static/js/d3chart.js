@@ -2,12 +2,12 @@
 var n = 100;
 chartData = new Array(n+1).join('0').split('').map(parseFloat);
 
-var margin = {top: 80, right: 100, bottom: 100, left: 120},
+var margin = {top: 80, right: 100, bottom: 100, left: 100},
   width = 1200 - margin.left - margin.right,
   height = 700 - margin.top - margin.bottom;
 
 var x = d3.scale.linear()
-  .domain([0, n - 1])
+  .domain([1, n - 2])
   .range([0, width]);
 
 var y = d3.scale.linear()
@@ -49,7 +49,7 @@ svg.append("text")
   .attr("transform", "rotate(-90)")
   .text("EEG Voltage");
 
-path = svg.append("g")
+var path = svg.append("g")
   .attr("clip-path", "url(#clip)")
 .append("path")
   .datum(chartData)

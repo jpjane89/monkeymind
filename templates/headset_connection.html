@@ -14,7 +14,7 @@
 
 {% block body %}
 
-<div class="jumbotron">
+<div class="jumbotron" id="start-message">
   <h1>You're connected!</h1>
   <div>
   <p>Spend a moment thinking about your goals for this session before beginning.</br>
@@ -23,15 +23,22 @@
   <p><a id= 'start-session' class="btn btn-primary btn-lg" role="button">Start</a></p>
 </div>
 
-<div class = 'sidebar-nav'>
-  <div class = 'sidebar-nav-header'>
-    <li>Now Playing:</li>
-  </div>
-  <hr id = 'sidebar-nav-separator-top'>
-  <div id='player-container'>
+<div class="below-header" id ='baseline-message'>
+  <span class="glyphicon glyphicon-stats"></span> <h3>Taking a baseline measure</h3>
+  <p>Over the next couple minutes, we'll take a baseline measure for the session. As best as you can, try to stay relatively still.</p>
+</div>
+
+<div>
+  <span id="speedometer"></span>
+</div>
+
+<div class = 'footer-nav'>
+  <div class = 'footer-container' id = 'left-footer-container'>
     <div id="api"></div>
-    <img id="art" src="" height="200" width="200" style="float:left;margin-right:20px;">
-    <div>
+    <img id="art" src="" height="140" width="140">
+  </div>
+  <div class = 'footer-container' id = 'left-center-footer-container'>
+      <h3> Now Playing: </h3>
       <div><b>Track: </b><span id="track"></span></div>
       <div><b>Album: </b><span id="album"></span></div>
       <div><b>Artist: </b><span id="artist"></span></div>
@@ -45,13 +52,12 @@
         <button id="pause">||</button>
         <button id="next">&gt;&gt;</button>
       </div>
-    </div>
   </div>
-  <div class = 'sidebar-nav-footer'>
-    <li>Time Elapsed:</li>
-  </div>
-   <hr id ='sidebar-nav-separator-bottom'>
-   <div id="time-elapsed">0:00</div>
+</div>
+
+<div class = 'timer'>
+    <h3>Time Elapsed:</h3>
+   <div id="clock">0:00</div>
 </div>
 
 <div id = 'script-container'>
@@ -74,19 +80,37 @@ function display_status(data) {
     }
     else if (data=='connected!') {
       connection_text.css('backgroundColor','#66CD00');
-      jumbotron();
+      start_message();
     }
     else {
       connection_text.css('backgroundColor','#ff1a1a')
     }
 }
 
-function jumbotron() {
-  var jumbotron = $('.jumbotron')
+function start_message() {
+  var jumbotron = $('#start-message')
   jumbotron.show();
 
   var startButton = $("#start-session")
   startButton.click(start_session)
+}
+
+function show_baseline_message() {
+  var baseline = $('#baseline-message')
+  baseline.show();
+}
+
+function change_baseline_message() {
+  var baseline = $('#baseline-message');
+  baseline.html("<span class='glyphicon glyphicon-check'></span> <h3>Baseline complete!</h3><p>Use the meter on the right to track your brain behavior. Try to keep the dial in the center zone.</p>" )
+  setTimeout(function() {
+      baseline.hide(); }, 30000);
+  scriptContainer = $("#script-container");
+  insertScript('speedometer',scriptContainer);
+
+  var clock = $('.timer');
+  clock.show();
+
 }
 
 function insertScript(script, container) {
@@ -100,12 +124,14 @@ function start_session() {
   var jumbotron = $('.jumbotron')
   jumbotron.hide();
 
-  $('.sidebar-nav').show();
+  $('.footer-nav').show();
   playlistMain();
 
   scriptContainer = $("#script-container");
   insertScript('d3chart',scriptContainer);
 
+  leftMessage = $(".left-message");
+  leftMessage.html("Track your brain waves below")
 
   socket.emit('readyMessage', 'ready');  
 }
