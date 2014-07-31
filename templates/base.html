@@ -1,22 +1,11 @@
 <html>
     <head>
-        
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
         <link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"/>
         <link rel="stylesheet" href="/static/css/main.css"/>
-        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-        <script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
-        <script src="/static/js/jquery.rdio.js"></script>
-        <script src="http://d3js.org/d3.v3.min.js"></script>
-        <script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js'></script>
         <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet"/>
         <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Play:700,400' type='text/css'>
-        <script type="text/javascript" src="http://iop.io/js/vendor/d3.v3.min.js"></script>
-        <script type="text/javascript" src="http://iop.io/js/vendor/polymer/PointerEvents/pointerevents.js"></script>
-        <script type="text/javascript" src="http://iop.io/js/vendor/polymer/PointerGestures/pointergestures.js"></script>
-        <script type="text/javascript" src="http://iop.io/js/iopctrl.js"></script>
         <link href='http://fonts.googleapis.com/css?family=VT323' rel='stylesheet' type='text/css'>
     </head>
 
@@ -43,4 +32,12 @@
         </div>
 
     </body>
+
+        <!-- jQuery script-->
+        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+        <script src="/static/js/jquery.rdio.js"></script>
+
+    {% block script %} {% endblock %}
+ </body>
 </html>

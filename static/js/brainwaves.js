@@ -9,6 +9,7 @@ var BASELINE_START = false;
 var BASELINE_COMPLETE = false;
 var BLINK_COUNT = 0;
 var BLINK_RECOVERY = null;
+var ABNORMAL_INTEGRALS = [];
 
 function getMedian(list) {
   list.sort (function(a,b) {return a-b;} );
@@ -52,10 +53,12 @@ function calculateIntegral(rawEeg) {
   emitIntegral(integral);
 }
 
-function pauseMusic() {
+function changeMusic() {
   var musicStreamer = $("#api");
-  musicStreamer.rdio().pause();
-  setTimeout(function() { musicStreamer.rdio().play();}, 2);
+  musicStreamer.rdio().next();
+  var musicAlert = $("#music-alert");
+  musicAlert.show();
+  setTimeout(function() { musicAlert.hide(); }, 4000);
 }
 
 function emitIntegral(integral) {
@@ -70,10 +73,10 @@ function emitIntegral(integral) {
     else if (integral < integralMin) {
       indexedIntegral = integralMax;
     }
-    // else if ((integral>leftBad && integral<leftOkay) || (integral<rightBad && integral>rightOkay)) {
-    //   pauseMusic();
-    //   indexedIntegral = integral;
-    // }
+    else if ((integral<leftOkay) || (integral>rightOkay)) {
+      ABNORMAL_INTEGRALS.push(integral);
+      indexedIntegral = integral;
+    }
     else {
       indexedIntegral = integral;
     }
@@ -147,11 +150,20 @@ function updateIntegral(data) {
   }
 }
 
+function checkAbnormal() {
+  console.log('checking to switch music');
+  var abnormalCount = ABNORMAL_INTEGRALS.length;
+  ABNORMAL_INTEGRALS = [];
+  if (abnormalCount >=3) {
+      changeMusic();
+  }
+}
+
 function inSession(data) {
 
   if (!BASELINE_COMPLETE) {
       calculateMedianIntegral();
-      change_baseline_message();
+      loadSessionElements();
   }
 
   rawEegArray.push(data);

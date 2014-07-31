@@ -34,11 +34,13 @@
 
 <div class = 'footer-nav'>
   <div class = 'footer-container' id = 'left-footer-container'>
+    <h3> Now Playing: </h3>
+  </div>
+  <div class = 'footer-container' id = 'left-center-footer-container'>
     <div id="api"></div>
     <img id="art" src="" height="140" width="140">
   </div>
-  <div class = 'footer-container' id = 'left-center-footer-container'>
-      <h3> Now Playing: </h3>
+  <div class = 'footer-container' id= 'center-left-footer-container'>
       <div><b>Track: </b><span id="track"></span></div>
       <div><b>Album: </b><span id="album"></span></div>
       <div><b>Artist: </b><span id="artist"></span></div>
@@ -53,24 +55,56 @@
         <button id="next">&gt;&gt;</button>
       </div>
   </div>
-</div>
-
-<div class = 'timer'>
+  <div class = 'footer-container' id= 'music-alert'>
+    <p>Refocus! Music is changing.</p>
+  </div>
+  <div class = 'footer-container' id= 'timer'>
+    <div id = 'timer-header'>
     <h3>Time Elapsed:</h3>
-   <div id="clock">0:00</div>
+    </div>
+     <div id="clock">00:00</div>
+  </div>
 </div>
 
 <div id = 'script-container'>
 
   <script src="/static/js/brainwaves.js"></script>
   <script src="/static/js/rdio_player.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script type="text/javascript" src="http://iop.io/js/vendor/polymer/PointerEvents/pointerevents.js"></script>
+  <script type="text/javascript" src="http://iop.io/js/vendor/polymer/PointerGestures/pointergestures.js"></script>
+  <script type="text/javascript" src="http://iop.io/js/iopctrl.js"></script>
 
 </div>
 
+{% endblock %}
+
+{% block script %}
+
+<script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js'></script>
 <script>
 
 var socket = null;
+var start = null;
 
+
+function formatTime(ms) {
+  var total_seconds = ms / 1000;
+  var minutes = Math.floor(total_seconds / 60);
+  var seconds = Math.floor(total_seconds % 60);
+
+  if (minutes < 10 && seconds < 10) {
+      return "0" + minutes + ":" + "0" + seconds;
+  }
+  if (minutes < 10 && seconds >= 10) {
+      return "0" + minutes + ":" + seconds;
+  }if (minutes >= 10 && seconds < 10) {
+      return minutes + ":" + "0" + seconds;
+  } 
+  return minutes + ":" + seconds; 
+}
+ 
 function display_status(data) {
   var connection_text = $("#connection-status");
     connection_text.html(data);
@@ -100,16 +134,32 @@ function show_baseline_message() {
   baseline.show();
 }
 
-function change_baseline_message() {
+function loadSessionElements() {
+
   var baseline = $('#baseline-message');
   baseline.html("<span class='glyphicon glyphicon-check'></span> <h3>Baseline complete!</h3><p>Use the meter on the right to track your brain behavior. Try to keep the dial in the center zone.</p>" )
+
   setTimeout(function() {
       baseline.hide(); }, 30000);
+
+  speedometer = $("#speedometer");
+  speedometer.show();
+
   scriptContainer = $("#script-container");
   insertScript('speedometer',scriptContainer);
 
-  var clock = $('.timer');
-  clock.show();
+  var timer = $('#timer');
+  timer.show()
+
+  start = new Date().getTime();
+
+  setInterval(function() {
+    var newTime = new Date().getTime();
+    var clock = $('#clock');
+    clock.html(formatTime(newTime - start));
+  }, 1000);
+
+  setInterval(checkAbnormal, 1000);
 
 }
 
