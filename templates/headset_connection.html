@@ -28,8 +28,16 @@
   <p>Over the next couple minutes, we'll take a baseline measure for the session. As best as you can, try to stay relatively still.</p>
 </div>
 
+<div class='center-bar'> 
+</div>
+
 <div>
   <span id="speedometer"></span>
+</div>
+
+<div class="jumbotron" id="music-alert">
+  <h1>Try to refocus!</h1>
+  <p>You veered off of center. The music will resume momentarily.</p>
 </div>
 
 <div class = 'footer-nav'>
@@ -55,15 +63,13 @@
         <button id="next">&gt;&gt;</button>
       </div>
   </div>
-  <div class = 'footer-container' id= 'music-alert'>
-    <p>Refocus! Music is changing.</p>
-  </div>
   <div class = 'footer-container' id= 'timer'>
     <div id = 'timer-header'>
-    <h3>Time Elapsed:</h3>
+      <h3>Time Elapsed:</h3>
     </div>
      <div id="clock">00:00</div>
   </div>
+     <p> <a id = "end-session-btn" class="btn btn-primary btn-lg" role="button">End</a></p>
 </div>
 
 <div id = 'script-container'>
@@ -105,51 +111,55 @@ function formatTime(ms) {
   return minutes + ":" + seconds; 
 }
  
-function display_status(data) {
-  var connection_text = $("#connection-status");
-    connection_text.html(data);
+function displayStatus(data) {
+  var connectionText = $("#connection-status");
+    connectionText.html(data);
 
     if (data=='standby') {
-      connection_text.css('backgroundColor','#FCDC3B');
+      connectionText.css('backgroundColor','#FCDC3B');
     }
     else if (data=='connected!') {
-      connection_text.css('backgroundColor','#66CD00');
-      start_message();
+      connectionText.css('backgroundColor','#66CD00');
+      startMessage();
     }
     else {
-      connection_text.css('backgroundColor','#ff1a1a')
+      connectionText.css('backgroundColor','#ff1a1a')
     }
 }
 
-function start_message() {
+function startMessage() {
   var jumbotron = $('#start-message')
   jumbotron.show();
 
   var startButton = $("#start-session")
-  startButton.click(start_session)
+  startButton.click(startSession)
 }
 
-function show_baseline_message() {
+function showBaselineMessage() {
   var baseline = $('#baseline-message')
   baseline.show();
 }
 
-function loadSessionElements() {
-
+function changeBaselineMessage() {
   var baseline = $('#baseline-message');
-  baseline.html("<span class='glyphicon glyphicon-check'></span> <h3>Baseline complete!</h3><p>Use the meter on the right to track your brain behavior. Try to keep the dial in the center zone.</p>" )
+  baseline.html("<span class='glyphicon glyphicon-check'></span> <h3>Baseline complete!</h3><p>Use the meter on the right to track your focus. Try to keep the dial in the center zone. When you lose focus, you'll be reminded to come back to center by a pause in the music.</p>" )
 
   setTimeout(function() {
       baseline.hide(); }, 30000);
 
+}
+
+function loadSpeedometer(){
   speedometer = $("#speedometer");
   speedometer.show();
 
   scriptContainer = $("#script-container");
   insertScript('speedometer',scriptContainer);
+}
 
+function setTimer() {
   var timer = $('#timer');
-  timer.show()
+  timer.show();
 
   start = new Date().getTime();
 
@@ -158,6 +168,25 @@ function loadSessionElements() {
     var clock = $('#clock');
     clock.html(formatTime(newTime - start));
   }, 1000);
+}
+
+function loadStopButton() {
+
+  var stop = $('#end-session-btn');
+  stop.show();
+
+  stop.click(sendSessionData);
+}
+
+function loadSessionElements() {
+
+  changeBaselineMessage();
+
+  loadSpeedometer();
+
+  loadStopButton();
+
+  setTimer();
 
   setInterval(checkAbnormal, 1000);
 
@@ -170,7 +199,7 @@ function insertScript(script, container) {
     container.append(elem);
 }
 
-function start_session() {
+function startSession() {
   var jumbotron = $('.jumbotron')
   jumbotron.hide();
 
@@ -178,7 +207,10 @@ function start_session() {
   playlistMain();
 
   scriptContainer = $("#script-container");
-  insertScript('d3chart',scriptContainer);
+  insertScript('d3chart', scriptContainer);
+
+  centerBar = $('.center-bar');
+  centerBar.show();
 
   leftMessage = $(".left-message");
   leftMessage.html("Track your brain waves below")
@@ -186,22 +218,54 @@ function start_session() {
   socket.emit('readyMessage', 'ready');  
 }
 
-function connection_main() {
+function sendSessionData() {
+
+  console.log('sending data')
+
+  var newTime = new Date().getTime();
+
+  var sessionData = {
+    sessionID: sessionStorage.sessionID,
+    integral: medianIntegral,
+    totalTime: newTime - start,
+    totalPauses: PAUSE_COUNT
+  }
+
+  console.log(sessionData);
+
+  $.ajax({
+    type: "POST",
+    url: "/complete",
+    data: sessionData,
+  }).done(function(data) {
+    window.location.replace('/complete');
+  }).fail(function() { console.log('failed');} );
+
+}
+
+function saveSessionID(data) {
+  sessionStorage.sessionID = data;
+  console.log(sessionStorage.sessionID);
+}
+
+function connectionMain() {
 
   var namespace = '/test';
   socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
   var duration = 1;
 
-  socket.on('connection status', display_status);
+  socket.on('connection status', displayStatus);
 
-  socket.on('first value', start_data);
+  socket.on('first value', startData);
   
-  socket.on('new value', stream_data);
+  socket.on('new value', streamData);
+
+  socket.on('session id', saveSessionID)
 
 }
 
 $(document).ready(function () {
-  connection_main();
+  connectionMain();
 });
 
 

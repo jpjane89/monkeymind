@@ -2,9 +2,32 @@
 
 {% block header %}
 <div>
-<a href="/" class="left-message">Hello, {{ session.get('user_name') }}!</a>
+<p class="left-message">Hello, {{ session.get('user_name') }}!</p>
 </div>
 
-<div class = 'right-header' ><a href="/playlist" id = "start-session-btn" class="btn btn-default btn active" role="button"><span class="glyphicon glyphicon-headphones"></span> Start a New Session</a>
+<div class = 'right-header'>
+	<a href="/playlist" id = "start-session-btn" class="btn btn-default btn active" role="button"><span class="glyphicon glyphicon-headphones"></span> Start a New Session</a>
 </div>
+{% endblock %}
+
+{% block script %}
+<!-- <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+<script src='static/js/progress_chart.js'></script> -->
+
+<script>
+
+function progressMain() {
+   $.get("/ajax/welcome", displayProgress);
+}
+
+function displayProgress(data) {
+	console.log(data);
+}
+
+
+$(document).ready(function () {
+  progressMain();
+});
+
+</script>
 {% endblock %}

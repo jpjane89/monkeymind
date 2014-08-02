@@ -2,7 +2,7 @@
 var n = 100;
 chartData = new Array(n+1).join('0').split('').map(parseFloat);
 
-var margin = {top: 120, right:0, bottom: 100, left: 90},
+var margin = {top: 140, right:0, bottom: 100, left: 90},
   width = 1200 - margin.left - margin.right,
   height = 550 - margin.top - margin.bottom;
 
@@ -26,15 +26,17 @@ var svg = d3.select("body").append("svg")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 svg.append("rect")
-    .attr("width", "100%")
-    .attr("height", "350px")
-    .attr("fill", "white");
+    .attr("width", "1108px")
+    .attr("height", "330px")
+    .attr("fill", "white")
+    .attr('stroke', 'black')
+    .attr('stroke-width','4');
 
 svg.append("defs").append("clipPath")
   .attr("id", "clip")
 .append("rect")
-  .attr("width", width)
-  .attr("height", height);
+  .attr("width", width+2)
+  .attr("height", height+2);
 
 svg.append("g")
   .attr("class", "x axis")

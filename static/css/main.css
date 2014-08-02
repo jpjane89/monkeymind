@@ -3,14 +3,51 @@
 body {
 	font-family: 'Open Sans', sans-serif;
   background-image: url("/static/img/spirals_opaque.jpg");
+  font-weight:400;
 }
 
 a{
   color: #428bca;
 }
 
+.playlist-stats {
+  width:500px;
+  margin-left:350px;
+  margin-top:100px;
+  font-size:18px;
+}
+.table-header {
+  margin-bottom:30px;
+}
+
+.table.table-hover thead{
+  font-weight: 800;
+  font-size:18px;
+}
+
+table tr td:last-child {
+    text-align: center;
+}
+/*Alert Styles */
+
 .jumbotron {
   display:none;
+}
+
+#music-alert{
+  display:none;
+  height:180px;
+  width:800px;
+  top:300px;
+  left:180px;
+  z-index:3000;
+  position:absolute;
+  padding:20px;
+  width:800px;
+}
+
+#end-message {
+  display:block;
 }
 
 /* Header Styles */
@@ -21,12 +58,13 @@ a{
   color:white;
   font-size: 24px;
   position:absolute;
-
 }
 
 .navbar.navbar-inverse {
   height:80px;
   z-index: 100;
+  font-weight:400;
+  font-family:'Open Sans';
 } 
 
 .right-header {
@@ -40,18 +78,19 @@ a{
   left:400;
   top:25;
   position:absolute;
+  font-family:'Open Sans';
 }
 
 #options-label{
   color: white;
   font-size: 18px;
+  font-weight:400;
+  font-family:'Open Sans';
 }
 
 input#autocomplete {
   color:black;
   font-size: 14px;
-  font-style:normal;
-  width:400px;
 }
 
 #connection-status {
@@ -94,20 +133,18 @@ input#autocomplete {
 /* Below-header Styles */ 
 .below-header {
   top:80;
-  left:50;
-  background-color:#B0E0E6;
+  left:90;
+  background-color:#B4CDCD;
   position:absolute;
-  height:80px;
-  width:1000px;
-  padding-top:20px;
-  padding-left:20px;
-  padding-bottom:5px;
+  height:110px;
+  width:1105px;
+  padding:15px;
   display:none;
 }
 
 .below-header p {
   padding-top:5px;
-  font-size:16px;
+  font-size:18px;
 }
 
 .below-header h1,h2,h3 {
@@ -116,6 +153,14 @@ input#autocomplete {
 
 .below-header span {
   font-size:20px;
+}
+
+.below-header-right {
+  top:120;
+  right:120;
+  position:absolute;
+  height:100px;
+  width:100px;
 }
 
 /* Footer Styles */
@@ -143,7 +188,7 @@ input#autocomplete {
   left:90px;
   top:60px;
   position:absolute;
-  font-style:italic;
+  font-style:bold;
 }
 
 #left-center-footer-container {
@@ -157,15 +202,6 @@ input#autocomplete {
   top:15px;
   position:absolute;
   font-size:16px;
-}
-
-#music-alert {
-  right:500px;
-  top:60px;
-  position:absolute;
-  color:red;
-  font:20px;
-  display:none;
 }
 
 #timer {
@@ -187,8 +223,29 @@ input#autocomplete {
   top:-15px;
 }
 
-/* d3 Chart Styles */
+#end-session-btn {
+  font-size:24px;
+  display:none;
+  position:absolute;
+  right:70px;
+  top:48px;
+  padding:5px;
+}
 
+/* Middle-Bar Styles */
+
+.center-bar {
+  display:none;
+  width:100%;
+  height:332px;
+  position:absolute;
+  background-color: white;
+  top:240px;
+  left:0px;
+  z-index:-10;
+}
+
+/* d3 Chart Styles */
 svg {
     font-family: 'Open Sans', sans-serif;
 }
@@ -214,13 +271,12 @@ svg {
 
 #speedometer {
   width:400px;
-  height:350px;
+  height:330px;
   position:absolute;
   z-index:1000;
   right:-0px;
-  top:220px;
+  top:240px;
   padding:30;
-  background-color: #E0EEE0;
   display:none;
 }
 .unselectable {
@@ -301,4 +357,47 @@ svg {
 .segdisplay .off {
     fill: #4CBB17;
     opacity: 0.15;
+}
 
+/*Progress chart*/
+
+.bar {
+  fill: orange;
+}
+
+.bar:hover {
+  fill: orangered ;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}

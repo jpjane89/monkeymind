@@ -12,6 +12,7 @@ import model
 import time
 
 app = Flask(__name__)
+app.config['DEBUG'] = True
 app.secret_key = 'secret key'
 app.jinja_env.undefined = jinja2.StrictUndefined
 
@@ -28,7 +29,7 @@ def send_connection_status():
 
   print "websocket connected"
 
-  time.sleep(10)
+  time.sleep(5)
 
   hs = mind_echo.set_global_headset()
 
@@ -49,8 +50,24 @@ def send_connection_status():
   emit('connection status','connected!')
   time.sleep(0.5)
 
+  date = datetime.now()
+
+  user = model.db.query(model.User).filter_by(rdio_id=session['user']).one()
+
+  user_id = user.id
+
+  new_session = model.Session(user_id=user_id,playlist=session['chosen_playlist'],datetime=date)
+  model.db.add(new_session)
+  model.db.commit()
+
+  model.db.refresh(new_session)
+  session_id = new_session.id
+
+  emit('session id', session_id)
+
 @socketio.on('disconnect', namespace= '/test')
 def disconnect_headset():
+  
   global hs
   hs.disconnect()
   hs.destroy()
@@ -68,7 +85,7 @@ def stream_data(message):
     data = mind_echo.continue_stream(start)
     emit('new value', data)
     start = data
-    
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -98,6 +115,7 @@ def rdio_callback():
   request_token = verify_request_token()
   get_oauth_token(request_token)
   get_user_info()
+  check_user()
 
   return redirect('/welcome')
 
@@ -135,10 +153,12 @@ def get_user_info():
 
 def check_user():
 
+  print 'got to fourth def'
+
   rdio_id = session['user']
   first_name = session['user_name']
 
-  user = model.db.query(model.User).filter_by(rdio_id=rdio_id).one()
+  user = model.db.query(model.User).filter_by(rdio_id=rdio_id).all()
 
   if not user:
     new_user = model.User(rdio_id=rdio_id, first_name=first_name)
@@ -152,10 +172,41 @@ def welcome():
 
   return render_template('welcome.html', name=first_name)
 
+@app.route('/ajax/welcome')
+def get_progress_data():
+
+  rdio_id = session['user']
+
+  user = model.db.query(model.User).filter_by(rdio_id=rdio_id).one()
+
+  users_sessions = model.db.query(model.Session).filter_by(user_id=user.id).all()
+
+  # print json.dumps(users_sessions)
+  # return json.dumps(users_sessions)
+
 @app.route('/playlist')
 def start_session():
 
-  return render_template('playlist.html')
+  playlist_stats = {}
+
+  rdio_id = session['user']
+
+  user = model.db.query(model.User).filter_by(rdio_id=rdio_id).one()
+
+  users_sessions = model.db.query(model.Session).filter_by(user_id=user.id).all()
+
+  for user_session in users_sessions:
+    pause_per_min = (60000 * user_session.total_pauses)/user_session.total_time
+    name = user_session.playlist
+    if name not in playlist_stats:
+      playlist_stats[name] = {'name': name, 'average':0, 'count':0}
+    existing_stats = playlist_stats.get(name)
+    playlist_stats[name]['count'] = existing_stats['count'] + 1
+    playlist_stats[name]['average'] = ((existing_stats['count'] * existing_stats['average']) + pause_per_min) / playlist_stats[user_session.playlist]['count']
+
+  values_list = sorted(playlist_stats.values(), key= lambda k: k['average'])
+
+  return render_template('playlist.html', playlists=values_list)
 
 @app.route('/ajax/playlists')
 def get_playlists():
@@ -186,8 +237,7 @@ def get_playlist():
   playlist_name = request.form.get("playlist")
 
   if playlist_name != '':
-    playlist_id = session['playlists'].get(playlist_name)
-    session['chosen_playlist'] = playlist_id
+    session['chosen_playlist'] = playlist_name
     return render_template('headset_connection.html')
   else:
     flash ("No playlist entered. Try again")
@@ -196,11 +246,11 @@ def get_playlist():
 @app.route('/ajax/rdio_player')
 def rdio_player():
 
-  print session['chosen_playlist']
-  return json.dumps(session['chosen_playlist'])
+  return json.dumps(session['playlists'].get(session['chosen_playlist']))
 
 @app.route('/ajax/getPlaybackToken')
 def get_playback_token():
+
   access_token = oauth.Token(session['oauth_token'],session['oauth_token_secret'])
   consumer = oauth.Consumer(CONSUMER_KEY, CONSUMER_SECRET)
 
@@ -209,9 +259,34 @@ def get_playback_token():
   json_response = json.loads(response[1])
 
   playback_token = json_response['result']
+
   session['playback_token'] = playback_token
 
   return playback_token
+
+@app.route('/complete', methods=["POST"])
+def process_session_data():
+  
+  median_integral = request.form.get('integral')
+  total_time = request.form.get('totalTime')
+  total_pauses = request.form.get('totalPauses')
+  session_id = request.form.get('sessionID')
+
+  print session_id
+
+  current_session = model.db.query(model.Session).filter_by(id=session_id).one()
+
+  current_session.median_integral = median_integral
+  current_session.total_time = total_time
+  current_session.total_pauses = total_pauses
+  model.db.commit()
+
+  return 'hello'
+
+@app.route('/complete', methods=["GET"])
+def complete_session():
+
+  return render_template('end_page.html')
   
 if __name__ == "__main__":
     socketio.run(app)

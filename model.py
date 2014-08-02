@@ -23,8 +23,8 @@ class Session(Base):
     datetime = Column(DateTime, nullable=True)
     user_id = Column(Integer, ForeignKey('users.id'))
     playlist = Column(String(120), nullable= True)
-    median_eeg = Column(Float, nullable=True)
     median_integral = Column(Float, nullable=True)
+    total_pauses = Column(Integer, nullable=True)
     total_time = Column(Integer, nullable=True)
 
     user = relationship("User", backref=backref("sessions",order_by=id))

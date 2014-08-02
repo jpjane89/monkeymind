@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<div class="jumbotron" id="end-message">
+  <h1>Great job, {{ session.get('user_name') }}!</h1>
+  <div>
+  <p>Stats from this session will be saved to your progress page.</p>
+  </div>
+  <p><a href="/welcome" class="btn btn-primary btn-lg" role="button">Review Progress</a></p>
+</div>
+
+{% endblock %}
+
+<!-- {% block script %}
+
+<script type="text/javascript">
+
+function endMain() {
+
+}
+
+$(document).ready(function () {
+  endMain();
+});
+
+
+</script>
+
+{% endblock %} -->

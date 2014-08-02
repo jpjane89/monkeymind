@@ -1,22 +1,18 @@
-function get_playback_token() {
-    $.get("/ajax/getPlaybackToken", return_playback_token);
+function getPlaylistKey() {
+  $.get("/ajax/rdio_player", returnPlaylistKey);
 }
 
-function return_playback_token(data) {
-  sessionStorage.playbackToken = data;
-}
-
-function get_playlist_key() {
-  $.get("/ajax/rdio_player", return_playlist_key);
-}
-
-function return_playlist_key(data) {
+function returnPlaylistKey(data) {
   sessionStorage.playlistKey = data;
 }
 
-function playlistMain() {
+function getPlaybackToken() {
+    $.get("/ajax/getPlaybackToken", loadRdioPlayer);
+}
 
-  get_playlist_key();
+function loadRdioPlayer(data) {
+
+  sessionStorage.playbackToken = data;
 
   $('#api').bind('ready.rdio', function() {
     var key = sessionStorage.playlistKey.replace(/"/g,"");
@@ -47,13 +43,27 @@ function playlistMain() {
     }
   });
 
-  get_playback_token();
-
   $('#api').rdio(sessionStorage.playbackToken);
 
   $('#previous').click(function() { $('#api').rdio().previous(); });
   $('#play').click(function() { $('#api').rdio().play(); });
   $('#pause').click(function() { $('#api').rdio().pause(); });
   $('#next').click(function() { $('#api').rdio().next(); });
+
+}
+
+function getPlaylistKey() {
+  $.get("/ajax/rdio_player", returnPlaylistKey);
+}
+
+function returnPlaylistKey(data) {
+  sessionStorage.playlistKey = data;
+}
+
+function playlistMain() {
+
+  getPlaylistKey();
+
+  getPlaybackToken();
 
 }

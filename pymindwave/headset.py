@@ -24,7 +24,10 @@ class DongleReader(threading.Thread):
         while self.running:
             if not self.parser.sending_data:
                 time.sleep(0.5)
-            self.parser.update()
+            try:
+                self.parser.update()
+            except:
+                break
 
     def stop(self):
         self.running = False

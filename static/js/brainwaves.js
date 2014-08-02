@@ -9,7 +9,8 @@ var BASELINE_START = false;
 var BASELINE_COMPLETE = false;
 var BLINK_COUNT = 0;
 var BLINK_RECOVERY = null;
-var ABNORMAL_INTEGRALS = [];
+var PAUSE_COUNT = 0;
+var TEMP_ABNORMAL_INTEGRALS = 0;
 
 function getMedian(list) {
   list.sort (function(a,b) {return a-b;} );
@@ -53,12 +54,15 @@ function calculateIntegral(rawEeg) {
   emitIntegral(integral);
 }
 
-function changeMusic() {
+function pauseMusic() {
   var musicStreamer = $("#api");
-  musicStreamer.rdio().next();
+  musicStreamer.rdio().pause();
+
+  setTimeout(function() { musicStreamer.rdio().play(); }, 2000);
+
   var musicAlert = $("#music-alert");
   musicAlert.show();
-  setTimeout(function() { musicAlert.hide(); }, 4000);
+  setTimeout(function() { musicAlert.hide(); }, 3000);
 }
 
 function emitIntegral(integral) {
@@ -74,7 +78,7 @@ function emitIntegral(integral) {
       indexedIntegral = integralMax;
     }
     else if ((integral<leftOkay) || (integral>rightOkay)) {
-      ABNORMAL_INTEGRALS.push(integral);
+      TEMP_ABNORMAL_INTEGRALS +=1;
       indexedIntegral = integral;
     }
     else {
@@ -87,15 +91,15 @@ function emitIntegral(integral) {
   rawEegArray = [];
 }
 
-function start_data(data) {
+function startData(data) {
   console.log('first value');
   START_TIME = Date.now();
-  IgnorePhaseTimeStamp = START_TIME + 10000;
-  BaseLinePhase1TimeStamp = START_TIME + 20000;
-  BaseLinePhase2TimeStamp = START_TIME + 40000;//160000;
+  IgnorePhaseTimeStamp = START_TIME + 5000;
+  BaseLinePhase1TimeStamp = START_TIME + 15000;
+  BaseLinePhase2TimeStamp = START_TIME + 25000;
 }
 
-function stream_data(data) {
+function streamData(data) {
   tick(data);
 
   time = Date.now();
@@ -122,7 +126,7 @@ function ignore(data) {
 function baseline1(data) {
 
   if (!BASELINE_START) {
-    show_baseline_message();
+    showBaselineMessage();
     BASELINE_START = true;
   }
   rawEegArray.push(data);
@@ -143,7 +147,7 @@ function updateIntegral(data) {
 
   if (INTEGRAL_START === null) {
     INTEGRAL_START = now;
-    IntegralEndTimeStamp = now + 250; //3000;
+    IntegralEndTimeStamp = now + 250;
   }
   else if (now >= IntegralEndTimeStamp) {
     calculateIntegral();
@@ -152,11 +156,12 @@ function updateIntegral(data) {
 
 function checkAbnormal() {
   console.log('checking to switch music');
-  var abnormalCount = ABNORMAL_INTEGRALS.length;
-  ABNORMAL_INTEGRALS = [];
-  if (abnormalCount >=3) {
-      changeMusic();
+  if (TEMP_ABNORMAL_INTEGRALS >=2) {
+      pauseMusic();
+      PAUSE_COUNT += 1;
+
   }
+  TEMP_ABNORMAL_INTEGRALS = 0;
 }
 
 function inSession(data) {

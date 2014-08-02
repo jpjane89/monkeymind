@@ -11,15 +11,43 @@
 
 {% endblock %}
 
+{% block body %}
+  <div class="playlist-stats">
+    <div class='table-header'>
+    <h3> You focus best listening to...</h3>
+    </div>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Playlist</th>
+          <th>Listen count</th>
+        </tr>
+      </thead>
+      <tbody>
+         {% set order_num = 1 %}   
+         {% for playlist in playlists %}
+         <tr>
+          <td>{{ order_num }}
+          <td>{{ playlist['name'] }}</td>
+          <td>{{ playlist['count'] }}</td>
+         </tr>
+         {% set order_num = order_num + 1 %} 
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+
 {% block script %}
 
 <script type="text/javascript">
 
-function get_playlists() {
-    $.get("/ajax/playlists", add_to_autocomplete);
+function getPlaylists() {
+    $.get("/ajax/playlists", addToAutocomplete);
 }
 
-function add_to_autocomplete(data) {
+function addToAutocomplete(data) {
     var playlists = JSON.parse(data);
     $("#autocomplete" ).autocomplete({
     source: playlists
@@ -27,7 +55,7 @@ function add_to_autocomplete(data) {
 }
 
 function main() {
-    get_playlists();
+    getPlaylists();
 }
 
 $(main);

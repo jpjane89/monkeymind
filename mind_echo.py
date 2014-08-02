@@ -7,20 +7,6 @@ import time
 
 hs = None
 
-# def connect():
-
-#     time.sleep(0.5)
-#     if hs.get_state() != 'connected':
-#         hs.disconnect()
-
-#     while hs.get_state() != 'connected':
-#         time.sleep(0.5)
-#         hs.connect()
-#         return hs.get_state()
-
-#     return 'connected!'
-#     time.sleep(0.5)
-
 def disconnect():
 
     print 'disconnecting...'
