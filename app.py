@@ -29,11 +29,9 @@ def send_connection_status():
 
   print "websocket connected"
 
-  time.sleep(10)
+  time.sleep(8)
 
   hs = mind_echo.set_global_headset()
-
-  print "got here"
 
   time.sleep(0.5)
   if hs.get_state() != 'connected':
@@ -88,10 +86,12 @@ def stream_data(message):
 
 @app.route("/")
 def index():
+    
     return render_template("index.html")
 
 @app.route("/login")
 def show_login():
+    
     return render_template("rdio_login.html")
 
 @app.route('/authorization_url')
@@ -120,14 +120,13 @@ def rdio_callback():
   return redirect('/welcome')
 
 def verify_request_token():
-  print "got to first def"
   oauth_verifier = request.args.get('oauth_verifier')
   request_token = oauth.Token(session['oauth_token'], session['oauth_token_secret'])
   request_token.set_verifier(oauth_verifier)
   return request_token
 
 def get_oauth_token(request_token):
-  print "got to second def"
+  
   consumer = oauth.Consumer(CONSUMER_KEY, CONSUMER_SECRET)
   client = oauth.Client(consumer, request_token)
   response, content = client.request('http://api.rdio.com/oauth/access_token', 'POST')
@@ -138,7 +137,7 @@ def get_oauth_token(request_token):
   session['oauth_token_secret'] = oauth_token_secret
 
 def get_user_info():
-  print "got to third def"
+  
   access_token = oauth.Token(session['oauth_token'],session['oauth_token_secret'])
   consumer = oauth.Consumer(CONSUMER_KEY, CONSUMER_SECRET)
 
@@ -152,8 +151,6 @@ def get_user_info():
   session['user_name'] = first_name
 
 def check_user():
-
-  print 'got to fourth def'
 
   rdio_id = session['user']
   first_name = session['user_name']
@@ -186,12 +183,12 @@ def get_progress_data():
   for user_session in users_sessions:
     new_session = {}
     new_session['session_id']= user_session.id
-    if user_session.total_pauses:
+    if user_session.total_pauses: # in case practice session
       new_session['pause_per_min'] = (300000 * user_session.total_pauses)/(user_session.total_time)
-    if user_session.datetime:
+    if user_session.datetime: # in case practice session
       new_session['date']= json.dumps(user_session.datetime.strftime('%Y-%m-%d'))
       new_session['start_time']=user_session.datetime.strftime('%I:%M%p')
-    if user_session.median_integral:
+    if user_session.median_integral: # in case practice session
       new_session['median_integral']=user_session.median_integral
     sessions_list.append(new_session)
 
@@ -209,22 +206,23 @@ def start_session():
   users_sessions = model.db.query(model.Session).filter_by(user_id=user.id).all()
 
   for user_session in users_sessions:
-    if user_session.total_pauses:
+    if user_session.total_pauses: # in case practice session
       pause_per_min = (300000 * user_session.total_pauses)/user_session.total_time
     name = user_session.playlist
-    if name not in playlist_stats:
+    if name not in playlist_stats: # in case practice session
       playlist_stats[name] = {'name': name, 'average':0, 'count':0}
     existing_stats = playlist_stats.get(name)
     playlist_stats[name]['count'] = existing_stats['count'] + 1
-    if pause_per_min:
+    if pause_per_min: # in case practice session
       playlist_stats[name]['average'] = ((existing_stats['count'] * existing_stats['average']) + pause_per_min) / playlist_stats[user_session.playlist]['count']
 
   values_list = sorted(playlist_stats.values(), key= lambda k: k['average'])
 
   return render_template('playlist.html', playlists=values_list)
 
-@app.route('/ajax/playlists')
+@app.route('/ajax/playlists') # get playlist names
 def get_playlists():
+
   access_token = oauth.Token(session['oauth_token'],session['oauth_token_secret'])
   consumer = oauth.Consumer(CONSUMER_KEY, CONSUMER_SECRET)
 
@@ -258,12 +256,12 @@ def get_playlist():
     flash ("No playlist entered. Try again")
     return redirect('/playlist')
 
-@app.route('/ajax/rdio_player')
+@app.route('/ajax/rdio_player') # get chosen playlist
 def rdio_player():
 
   return json.dumps(session['playlists'].get(session['chosen_playlist']))
 
-@app.route('/ajax/getPlaybackToken')
+@app.route('/ajax/getPlaybackToken')  # get playback token
 def get_playback_token():
 
   access_token = oauth.Token(session['oauth_token'],session['oauth_token_secret'])
@@ -279,7 +277,7 @@ def get_playback_token():
 
   return playback_token
 
-@app.route('/complete', methods=["POST"])
+@app.route('/complete', methods=["POST"]) # get session data and save to DB
 def process_session_data():
   
   median_integral = request.form.get('integral')

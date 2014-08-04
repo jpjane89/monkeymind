@@ -145,9 +145,10 @@ label#options-label{
   font-family:'Open Sans';
 }
 
-input#playlist {
+input#autocomplete {
   color:black;
   font-size: 18px;
+  width:350px;
 }
 
 #connection-status {

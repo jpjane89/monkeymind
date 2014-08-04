@@ -1,7 +1,7 @@
-var rawEegArray = [];
-var medianEeg = null;
-var baselineIntegrals = [];
-var medianIntegral = null;
+var RAW_EEG_ARRAY = [];
+var MEDIAN_EEG = null;
+var BASELINE_INTEGRALS = [];
+var MEDIAN_INTEGRAL = null;
 var CURRENT_STATE = null;
 var START_TIME = null;
 var INTEGRAL_START = null;
@@ -28,17 +28,17 @@ function getMedian(list) {
 function calculateMedianEeg() {
   console.log('calculating median EEG');
 
-  medianEeg = getMedian(rawEegArray);
+  MEDIAN_EEG = getMedian(RAW_EEG_ARRAY);
 
-  rawEegArray = [];
+  RAW_EEG_ARRAY = [];
 }
 
 function calculateMedianIntegral() {
   console.log('calculating median Integral');
 
-  medianIntegral = getMedian(baselineIntegrals);
+  MEDIAN_INTEGRAL = getMedian(BASELINE_INTEGRALS);
 
-  rawEegArray = [];
+  RAW_EEG_ARRAY = [];
   BASELINE_COMPLETE = true;
   INTEGRAL_START = null;
 }
@@ -47,8 +47,8 @@ function calculateIntegral(rawEeg) {
   var integral = 0;
   var indexedIntegral = null;
 
-  for (i = 0; i < rawEegArray.length-1; i++) {
-    integral += rawEegArray[i]*2;
+  for (i = 0; i < RAW_EEG_ARRAY.length-1; i++) {
+    integral += RAW_EEG_ARRAY[i]*2;
   }
   
   emitIntegral(integral);
@@ -68,7 +68,7 @@ function pauseMusic() {
 function emitIntegral(integral) {
 
   if (!BASELINE_COMPLETE) {
-    baselineIntegrals.push(integral);
+    BASELINE_INTEGRALS.push(integral);
   }
   else {
     if (integral > integralMax) {
@@ -88,7 +88,7 @@ function emitIntegral(integral) {
   }
 
   INTEGRAL_START = null;
-  rawEegArray = [];
+  RAW_EEG_ARRAY = [];
 }
 
 function startData(data) {
@@ -129,16 +129,16 @@ function baseline1(data) {
     showBaselineMessage();
     BASELINE_START = true;
   }
-  rawEegArray.push(data);
+  RAW_EEG_ARRAY.push(data);
 }
 
 function baseline2(data) {
 
-  if (medianEeg === null) {
+  if (MEDIAN_EEG === null) {
     calculateMedianEeg();
   }
   
-  rawEegArray.push(data);
+  RAW_EEG_ARRAY.push(data);
   updateIntegral();
 }
 
@@ -171,20 +171,20 @@ function inSession(data) {
       loadSessionElements();
   }
 
-  rawEegArray.push(data);
+  RAW_EEG_ARRAY.push(data);
   updateIntegral();
 
-  if ((Math.abs(data)> medianEeg*4) && !BLINK_RECOVERY && (rawEegArray.length>=5)) {
+  if ((Math.abs(data)> MEDIAN_EEG*4) && !BLINK_RECOVERY && (RAW_EEG_ARRAY.length>=5)) {
     checkForBlink();
   }
 }
 
 function checkForBlink() {
-  var blinkArray = rawEegArray.slice(-5);
+  var blinkArray = RAW_EEG_ARRAY.slice(-5);
   var count = 0;
 
   for (i = 0; i < blinkArray.length; i++) {
-    if (Math.abs(blinkArray[i])> medianEeg*4) {
+    if (Math.abs(blinkArray[i])> MEDIAN_EEG*4) {
       count +=1;
     }
   }

@@ -1,12 +1,12 @@
-var integralMin = medianIntegral - (medianIntegral*0.9);
-var leftBad = medianIntegral - (medianIntegral*0.7);
-var leftOkay = medianIntegral - (medianIntegral*0.5);
-var leftGood = medianIntegral - (medianIntegral*0.3);
-var center = medianIntegral - (medianIntegral*0.1);
-var rightGood = medianIntegral + (medianIntegral*0.1);
-var rightOkay = medianIntegral + (medianIntegral*0.3);
-var rightBad = medianIntegral + (medianIntegral*0.5);
-var integralMax = medianIntegral + (medianIntegral*0.7);
+var integralMin = MEDIAN_INTEGRAL - (MEDIAN_INTEGRAL*0.9);
+var leftBad = MEDIAN_INTEGRAL - (MEDIAN_INTEGRAL*0.7);
+var leftOkay = MEDIAN_INTEGRAL - (MEDIAN_INTEGRAL*0.5);
+var leftGood = MEDIAN_INTEGRAL - (MEDIAN_INTEGRAL*0.3);
+var center = MEDIAN_INTEGRAL - (MEDIAN_INTEGRAL*0.1);
+var rightGood = MEDIAN_INTEGRAL + (MEDIAN_INTEGRAL*0.1);
+var rightOkay = MEDIAN_INTEGRAL + (MEDIAN_INTEGRAL*0.3);
+var rightBad = MEDIAN_INTEGRAL + (MEDIAN_INTEGRAL*0.5);
+var integralMax = MEDIAN_INTEGRAL + (MEDIAN_INTEGRAL*0.7);
 
 var svg = d3.select("#speedometer")
         .append("svg:svg")
@@ -63,5 +63,5 @@ svg.append("g")
         .call(gauge);
 
 segDisplay.value(BLINK_COUNT);
-gauge.value(medianIntegral);
+gauge.value(MEDIAN_INTEGRAL);
     

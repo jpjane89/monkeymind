@@ -7,8 +7,6 @@ function displayProgress(data) {
   width = 1200 - margin.left - margin.right,
   height = 580 - margin.top - margin.bottom;
 
-  // var formatPercent = d3.format(".0%");
-
   var x = d3.scale.ordinal()
       .domain(chartData.map(function(d) { return d.session_id; }))
       .rangeRoundBands([0, width], 0.2);

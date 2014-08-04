@@ -4,7 +4,7 @@
 
 /* Links */
 a{
-  color: #428bca;
+  color: #00688B;
 }
 
 /* Custom default button */
@@ -29,7 +29,7 @@ body {
   background-color: #333;
 }
 body {
-  color: #fff;
+  color: white;
   text-align: center;
   text-shadow: 0 1px 3px rgba(0,0,0,.5);
   box-shadow: inset 0 0 100px rgba(0,0,0,.5);
@@ -38,10 +38,22 @@ body {
 
 h1 {
   font-size:64px;
-  padding-bottom:20px;
+  padding-bottom:10px;
 }
 
+.rdio-registration {
+  padding: 10px;
+  font-size:16px;
+}
+
+.inner-cover {
+  background-color:#7F7F7F;
+  height:200px;
+  width:700px;
+  padding:15px;
+}
 /* Extra markup and styles for table-esque vertical and horizontal centering */
+
 .site-wrapper {
   display: table;
   width: 100%;
@@ -62,8 +74,6 @@ h1 {
   padding: 30px;
   font-size:18px;
 }
-
-
 /*
  * Header
  */
@@ -107,8 +117,6 @@ h1 {
     float: right;
   }
 }
-
-
 /*
  * Cover
  */
@@ -120,17 +128,6 @@ h1 {
   padding: 10px 20px;
   font-weight: bold;
 }
-
-
-/*
- * Footer
- */
-
-.mastfoot {
-  color: #999; /* IE8 proofing */
-  color: rgba(255,255,255,.5);
-}
-
 
 /*
  * Affix and center
