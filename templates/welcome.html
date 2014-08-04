@@ -2,26 +2,44 @@
 
 {% block header %}
 <div>
-<p class="left-message">Hello, {{ session.get('user_name') }}!</p>
+<p class="hello-message">Hello, {{ session.get('user_name') }}!</p>
 </div>
 
 <div class = 'right-header'>
-	<a href="/playlist" id = "start-session-btn" class="btn btn-default btn active" role="button"><span class="glyphicon glyphicon-headphones"></span> Start a New Session</a>
+	<a href="/playlist" id = "start-session-btn" class="btn btn-default btn-lg active" role="button"><span class="glyphicon glyphicon-headphones"></span> Start a New Session</a>
 </div>
 {% endblock %}
 
+{% block body %}
+<div id = 'progress-header'>
+	<div>
+	<p> Review Your Progress: </p>
+	</div>
+</div>
+
+<div class='center-bar' id='welcome-page'>
+</div>
+
+<div class="jumbotron" id="progress-message">
+  <div>
+  <h2>Keep up the good work!</h2>
+  </div>
+  </br>
+  <p>Each bar on the left corresponds to one MonkeyMind session. The height of the bar indicates the average number of times you had to stop and re-focus over 5 minutes.</br></br> Over time, you should expect to see a decrease in the number of stops.</br></br> Tip: pay attention to the time of day when you focus better or worse.</p>
+</div>
+
+{% endblock %}
+
 {% block script %}
-<!-- <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
-<script src='static/js/progress_chart.js'></script> -->
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+<script src='static/js/progress_chart.js'></script>
 
 <script>
 
 function progressMain() {
    $.get("/ajax/welcome", displayProgress);
-}
-
-function displayProgress(data) {
-	console.log(data);
 }
 
 

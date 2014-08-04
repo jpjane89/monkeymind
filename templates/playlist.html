@@ -12,11 +12,19 @@
 {% endblock %}
 
 {% block body %}
-  <div class="playlist-stats">
-    <div class='table-header'>
-    <h3> You focus best listening to...</h3>
-    </div>
-    <table class="table table-hover">
+
+<div class="jumbotron" id="playlist-message">
+  <div>
+  <h2>Choose smart!</h2>
+  </div>
+  <p>Some playlists may help you focus more than others.</br></br>We've calculated how often you lose focus when listening to different playlists. If you're looking for a challenge, practice with a playlist at the bottom of the list.</br></br>Try to experiment with different playlists and sounds.</p>
+</div>
+
+<div class= 'right-bar'>
+  <div class='table-header'>
+    <p> You focus best listening to:</p>
+  </div>
+    <table id= 'playlist-table' class="table table-hover">
       <thead>
         <tr>
           <th>#</th>
@@ -36,7 +44,7 @@
         {% endfor %}
       </tbody>
     </table>
-  </div>
+</div>
 {% endblock %}
 
 {% block script %}

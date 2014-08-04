@@ -3,7 +3,11 @@
 {% block header %}
 
 <div>
-<p class="left-message">Connect Your Headset</p>
+<p class="hello-message">Connect Your Headset</p>
+</div>
+
+<div>
+  <p> <a id = "end-session-btn" class="btn btn-default btn active" role="button"><span class="glyphicon glyphicon-headphones"></span>  End session</a></p>
 </div>
 
 <div class = 'right-header'>
@@ -28,7 +32,7 @@
   <p>Over the next couple minutes, we'll take a baseline measure for the session. As best as you can, try to stay relatively still.</p>
 </div>
 
-<div class='center-bar'> 
+<div class='center-bar' id = 'session-page'> 
 </div>
 
 <div>
@@ -69,7 +73,7 @@
     </div>
      <div id="clock">00:00</div>
   </div>
-     <p> <a id = "end-session-btn" class="btn btn-primary btn-lg" role="button">End</a></p>
+     <p> <a id = "end-session-btn" class="btn btn-default btn-lg active" role="button">End</a></p>
 </div>
 
 <div id = 'script-container'>
@@ -212,7 +216,7 @@ function startSession() {
   centerBar = $('.center-bar');
   centerBar.show();
 
-  leftMessage = $(".left-message");
+  leftMessage = $(".hello-message");
   leftMessage.html("Track your brain waves below")
 
   socket.emit('readyMessage', 'ready');  

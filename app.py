@@ -29,7 +29,7 @@ def send_connection_status():
 
   print "websocket connected"
 
-  time.sleep(5)
+  time.sleep(10)
 
   hs = mind_echo.set_global_headset()
 
@@ -175,14 +175,27 @@ def welcome():
 @app.route('/ajax/welcome')
 def get_progress_data():
 
+  sessions_list = []
+
   rdio_id = session['user']
 
   user = model.db.query(model.User).filter_by(rdio_id=rdio_id).one()
 
   users_sessions = model.db.query(model.Session).filter_by(user_id=user.id).all()
 
-  # print json.dumps(users_sessions)
-  # return json.dumps(users_sessions)
+  for user_session in users_sessions:
+    new_session = {}
+    new_session['session_id']= user_session.id
+    if user_session.total_pauses:
+      new_session['pause_per_min'] = (300000 * user_session.total_pauses)/(user_session.total_time)
+    if user_session.datetime:
+      new_session['date']= json.dumps(user_session.datetime.strftime('%Y-%m-%d'))
+      new_session['start_time']=user_session.datetime.strftime('%I:%M%p')
+    if user_session.median_integral:
+      new_session['median_integral']=user_session.median_integral
+    sessions_list.append(new_session)
+
+  return json.dumps(sessions_list)
 
 @app.route('/playlist')
 def start_session():
@@ -196,13 +209,15 @@ def start_session():
   users_sessions = model.db.query(model.Session).filter_by(user_id=user.id).all()
 
   for user_session in users_sessions:
-    pause_per_min = (60000 * user_session.total_pauses)/user_session.total_time
+    if user_session.total_pauses:
+      pause_per_min = (300000 * user_session.total_pauses)/user_session.total_time
     name = user_session.playlist
     if name not in playlist_stats:
       playlist_stats[name] = {'name': name, 'average':0, 'count':0}
     existing_stats = playlist_stats.get(name)
     playlist_stats[name]['count'] = existing_stats['count'] + 1
-    playlist_stats[name]['average'] = ((existing_stats['count'] * existing_stats['average']) + pause_per_min) / playlist_stats[user_session.playlist]['count']
+    if pause_per_min:
+      playlist_stats[name]['average'] = ((existing_stats['count'] * existing_stats['average']) + pause_per_min) / playlist_stats[user_session.playlist]['count']
 
   values_list = sorted(playlist_stats.values(), key= lambda k: k['average'])
 

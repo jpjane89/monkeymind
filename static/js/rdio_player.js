@@ -30,7 +30,7 @@ function loadRdioPlayer(data) {
   });
 
   $('#api').bind('positionChanged.rdio', function(e, position) {
-    $('#position').css('width', Math.floor(100*position/duration)+'%');
+    $('#position').css('width', Math.floor(100*position/duration)+'%').css('background-color', 'black');
   });
 
   $('#api').bind('playStateChanged.rdio', function(e, playState) {

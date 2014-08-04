@@ -45,16 +45,16 @@ svg.append("g")
 
 svg.append("g")
   .attr("class", " y axis")
-  .call(d3.svg.axis().scale(y).orient("left"));
+  .call(d3.svg.axis().scale(y).ticks(9).orient("left"));
 
 svg.append("text")
   .attr("class", "y-label")
-  .attr("x", -140)
+  .attr("x", -50)
   .attr("text-anchor", "end")
   .attr("y", -70)
   .attr("dy", "1em")
   .attr("transform", "rotate(-90)")
-  .text("EEG Voltage");
+  .text("EEG Voltage (microvolts)");
 
 var path = svg.append("g")
   .attr("clip-path", "url(#clip)")
