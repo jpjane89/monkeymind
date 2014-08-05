@@ -21,5 +21,11 @@ pip install -r requirements.txt
 
 ## What does it look like?
 
-Once a user is logged in through Rdio, they are taken to their home-page which presents their history of neurofeedback sessions. The bars in the chart correspond with the number of times the user had to stop to refocus over a 5 minute period of time. Over time, the user should expect to see a decrease in bar heights.
+Once a user is logged in through Rdio, they are taken to their homepage which presents their history of neurofeedback sessions. The bars in the chart correspond with the number of times the user had to stop to refocus over a 5 minute period of time. Over time, the user should expect to see the bars decrease in height. To start a new session, the user clicks the button in the upper right corner.
 ![Screenshot](https://raw.github.com/jpjane89/monkeymind/master/screenshots/progress.png)
+
+The user is then prompted to choose a playlist for their training session. A list of their playlists is accessed using the Rdio API and added to the autocomplete input tab. On the right, the user is given a summary of how well they have focused in the past listening to the various playlists, ordered by the average number of times the user has to re-focus in a 5 minute period listening to that playlist.
+![Screenshot](https://raw.github.com/jpjane89/monkeymind/master/screenshots/playlist.png)
+
+Once the user has chosen their playlist, they are prompted to connect their MindWave headset, which involves putting the dongle into their computer's USB drive and turning the headset to the "on" position. In the upper right corner, the application reads in the headset's status. 
+![Screenshot](https://raw.github.com/jpjane89/monkeymind/master/screenshots/connect.png)
