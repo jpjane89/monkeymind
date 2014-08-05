@@ -8,8 +8,7 @@ Mimicked after other models of neurofeedback training programs, MonkeyMind uses 
 
 1. MindWave headset
 2. Register the application with [Rdio](http://www.rdio.com/developers/) and get application keys
-2. Install dependencies using:
-
+3. Install dependencies using:
 	pip install -r requirements.txt
 
 
