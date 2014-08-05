@@ -16,8 +16,10 @@ app.config['DEBUG'] = True
 app.secret_key = 'secret key'
 app.jinja_env.undefined = jinja2.StrictUndefined
 
-CONSUMER_KEY = '8xjysrrzyxyr7ca6m9uqmczz'; 
-CONSUMER_SECRET = 'S9X2mnMEcQ';
+import os
+
+CONSUMER_KEY = os.environ.get("CONSUMER_KEY")
+CONSUMER_SECRET = os.environ.get('CONSUMER_SECRET')
 
 socketio = SocketIO(app)
 hs = None
