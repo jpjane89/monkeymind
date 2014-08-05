@@ -19,4 +19,4 @@ pip install -r requirements.txt
 ```
 
 ## What does it look like?
-![Screenshot](https://raw.github.com/jpjane89/monkeymind/master/Screenshots/Progress.png)
+![Screenshot](https://raw.github.com/jpjane89/monkeymind/master/Screenshots/progress.png)
