@@ -5,7 +5,7 @@ import StringIO
 import parser
 import unittest
 
-class TestParserOperations(unittest.TestCase):
+class TestParser(unittest.TestCase):
 
     def setUp(self):
         self.standby_test_stream = StringIO.StringIO(

@@ -1,6 +1,6 @@
 from flask import abort, Flask, request, session, render_template, g, redirect, url_for, flash
 from flask.ext.socketio import SocketIO, emit
-import mind_echo
+import stream_generator
 import jinja2
 from datetime import datetime
 import urllib, cgi
@@ -31,7 +31,7 @@ def send_connection_status():
 
   time.sleep(8)
 
-  hs = mind_echo.set_global_headset()
+  hs = stream_generator.set_global_headset()
 
   time.sleep(0.5)
   if hs.get_state() != 'connected':
@@ -75,12 +75,12 @@ def disconnect_headset():
 def stream_data(message):
   global hs
   
-  start = mind_echo.start_stream()
-  data = mind_echo.continue_stream(start)
+  start = stream_generator.start_stream()
+  data = stream_generator.continue_stream(start)
   emit('first value', data)
 
   while True:
-    data = mind_echo.continue_stream(start)
+    data = stream_generator.continue_stream(start)
     emit('new value', data)
     start = data
 
