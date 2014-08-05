@@ -6,6 +6,8 @@ import json
 import time
 
 hs = None
+test_mode = False
+test_values = []
 
 def disconnect():
 
@@ -16,17 +18,24 @@ def disconnect():
 
 def generate_stream():
 
-    while True:
-        if hs.parser.raw_values:
-            v = hs.parser.raw_values.pop(0)
-            yield v
-        else:
-            time.sleep(0.1)
+    if not test_mode:
+        while True:
+            if hs.parser.raw_values:
+                v = hs.parser.raw_values.pop(0)
+                yield v
+            else:
+                time.sleep(0.1)
+
+    else:
+        print test_values
+        v = test_values.pop(0)
+        yield v
+        
 
 def process_first_value():
 
     raw_v = generate_stream().next()
-    v = (raw_v *(1.8/4096))/2000
+    v = (raw_v *(1.8/4096))/2000 * 1000000
 
     return v
 
@@ -46,23 +55,18 @@ def smooth_value(before_v, v):
 def start_stream():
 
     generate_stream()
-
     v = process_first_value()
-
     return v
 
 def continue_stream(before_v):
 
     next_v = process_next_value(before_v)
-
     return next_v
 
 def set_global_headset():
 
     global hs
-
     hs = headset.Headset('/dev/tty.MindWave') 
-
     return hs
 
 
