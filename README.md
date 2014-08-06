@@ -18,12 +18,10 @@ Front-end: Javascript, D3.js, jQuery & jQuery UI
 ```
 pip install -r requirements.txt
 ```
-
 4. Run the following code in Command Line:
 ```
 python app.py
 ```
-
 5. Open up a browser at http://localhost:5000/
 
 
