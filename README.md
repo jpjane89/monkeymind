@@ -6,7 +6,7 @@ Mimicked after other models of neurofeedback training programs, MonkeyMind uses 
 
 MonkeyMind incorporates the [python-mindwave library](https://github.com/akloster/python-mindwave/tree/master/pymindwave) for parsing the raw EEG data from the MindWave headset.
 
-Back-end: Written in a Python-Flask MVC framework where Jinja provides the views and SQL Alchemy provides the models. Employs Flask-Socket.io for transferring data from the MindWave headset to the browser.
+Back-end: Written in a Python-Flask MVC framework where Jinja provides the views and SQL Alchemy provides the model. Employs Flask-Socket.io for transferring data from the MindWave headset to the browser.
 
 Front-end: Javascript, D3.js, jQuery & jQuery UI
 
@@ -15,13 +15,13 @@ Front-end: Javascript, D3.js, jQuery & jQuery UI
 1. MindWave headset and reader
 2. Register the application with [Rdio](http://www.rdio.com/developers/) and get application keys
 3. Install dependencies using:
-	```
-	pip install -r requirements.txt
-	```
+```
+pip install -r requirements.txt
+```
 4. Run the following code in Command Line:
-	```
-	python app.py
-	```
+```
+python app.py
+```
 5. Open up a browser at http://localhost:5000/
 
 ## What does it look like?
