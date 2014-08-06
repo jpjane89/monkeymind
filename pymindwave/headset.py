@@ -60,3 +60,6 @@ class Headset():
     def destroy(self):
         self.dongle_reader.stop()
         self.dongle_fs.close()
+
+    def get_state(self):
+        return self.parser.dongle_state
