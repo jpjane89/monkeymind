@@ -1,16 +1,25 @@
+//this script sets up the Rdio player and is contained within 'headset_connection.html'
+
+function playlistMain() { //gets the user's chosen playlist and playback token. This is called from after baseline is done.
+
+  getPlaylistKey();
+
+  getPlaybackToken();
+}
+
 function getPlaylistKey() {
   $.get("/ajax/rdio_player", returnPlaylistKey);
 }
 
-function returnPlaylistKey(data) {
+function returnPlaylistKey(data) { //saves playlist key to browser storage
   sessionStorage.playlistKey = data;
 }
 
-function getPlaybackToken() {
+function getPlaybackToken() { //playback token needed to load Rdio player
     $.get("/ajax/getPlaybackToken", loadRdioPlayer);
 }
 
-function loadRdioPlayer(data) {
+function loadRdioPlayer(data) { //loads Rdio player
 
   sessionStorage.playbackToken = data;
 
@@ -49,21 +58,5 @@ function loadRdioPlayer(data) {
   $('#play').click(function() { $('#api').rdio().play(); });
   $('#pause').click(function() { $('#api').rdio().pause(); });
   $('#next').click(function() { $('#api').rdio().next(); });
-
-}
-
-function getPlaylistKey() {
-  $.get("/ajax/rdio_player", returnPlaylistKey);
-}
-
-function returnPlaylistKey(data) {
-  sessionStorage.playlistKey = data;
-}
-
-function playlistMain() {
-
-  getPlaylistKey();
-
-  getPlaybackToken();
 
 }

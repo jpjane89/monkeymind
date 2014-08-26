@@ -1,6 +1,7 @@
+//this script contains the chart for visualizing brainwave data. It is loaded in 'headset_connection.html' when the session starts
 
 var n = 100;
-chartData = new Array(n+1).join('0').split('').map(parseFloat);
+chartData = new Array(n+1).join('0').split('').map(parseFloat); //this is where data will be added
 
 var margin = {top: 140, right:0, bottom: 100, left: 90},
   width = 1200 - margin.left - margin.right,
@@ -64,9 +65,9 @@ var path = svg.append("g")
   .attr("d", line);
 
 
-function tick(rawEeg) {
+function tick(rawEeg) { //this function is called each time a new value comes in
 
-  chartData.push(rawEeg);
+  chartData.push(rawEeg); //adds to array declared above
 
   path
       .attr("d", line)

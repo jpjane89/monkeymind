@@ -1,3 +1,5 @@
+//this script contains chart for displaying progress on the 'welcome' page and is contained within 'welcome.html'
+
 function displayProgress(data) {
 
   var chartData = JSON.parse(data);
@@ -8,11 +10,11 @@ function displayProgress(data) {
   height = 580 - margin.top - margin.bottom;
 
   var x = d3.scale.ordinal()
-      .domain(chartData.map(function(d) { return d.session_id; }))
+      .domain(chartData.map(function(d) { return d.session_id; })) //session number on X axis
       .rangeRoundBands([0, width], 0.2);
 
   var y = d3.scale.linear()
-      .domain([0, d3.max(chartData, function(d) { return d.pause_per_min; })])
+      .domain([0, d3.max(chartData, function(d) { return d.pause_per_min; })]) //pauses per minute on Y axis
       .range([height, 0]);
 
   var xAxis = d3.svg.axis()
@@ -27,7 +29,7 @@ function displayProgress(data) {
       .tickValues(0)
       .ticks(0);
 
-  var tip = d3.tip()
+  var tip = d3.tip() //formats data that displays when you hover over a bar
     .attr('class', 'd3-tip')
     .offset([-10, 0])
     .html(function(d) {
@@ -45,24 +47,11 @@ function displayProgress(data) {
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
-        .call(xAxis)
-         // .append("text")
-         //  .attr("class", "x-axis-label")
-         //  .attr("y", 10)
-         //  .attr("dy", ".71em")
-         //  .attr('x', -100)
-         //  .text("Session number");
+        .call(xAxis);
 
     svg.append("g")
         .attr("class", "y axis")
         .call(yAxis);
-      // .append("text")
-      //   .attr("class", "y-axis-label")
-      //   .attr("transform", "rotate(-90)")
-      //   .attr("y", -100)
-      //   .attr("dy", ".71em")
-      //   .attr('x', -400)
-      //   .text("Average number of times you had to refocus, per 5 minutes");
 
     svg.selectAll(".bar")
         .data(chartData)

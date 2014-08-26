@@ -1,25 +1,25 @@
+// this script contains the main visual elements and timing scenarios of the session page
 
-var socket = null;
-var start = null;
+var socket = null; //this will contain websocket connection
+var start = null; //this will be a boolean value to set when the session starts
 
+function connectionMain() { //sets up websocket connection
 
-function formatTime(ms) {
-  var total_seconds = ms / 1000;
-  var minutes = Math.floor(total_seconds / 60);
-  var seconds = Math.floor(total_seconds % 60);
+  var namespace = '/test';
+  socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+  var duration = 1;
 
-  if (minutes < 10 && seconds < 10) {
-      return "0" + minutes + ":" + "0" + seconds;
-  }
-  if (minutes < 10 && seconds >= 10) {
-      return "0" + minutes + ":" + seconds;
-  }if (minutes >= 10 && seconds < 10) {
-      return minutes + ":" + "0" + seconds;
-  }
-  return minutes + ":" + seconds;
+  socket.on('connection status', displayStatus); //handles info on connection status
+
+  socket.on('first value', startData); //handles first EEG value--> see 'brainwaves.js'
+  
+  socket.on('new value', streamData); //handles all subsequent EEG values--> see 'brainwaves.js'
+
+  socket.on('session id', saveSessionID); //saves session ID to send back to database at end of session
+
 }
- 
-function displayStatus(data) {
+
+function displayStatus(data) { //displays connection status on top of page
   var connectionText = $("#connection-status");
     connectionText.html(data);
 
@@ -28,7 +28,7 @@ function displayStatus(data) {
     }
     else if (data=='connected!') {
       connectionText.css('backgroundColor','#66CD00');
-      startMessage();
+      startMessage(); //loads start message
     }
     else {
       connectionText.css('backgroundColor','#ff1a1a');
@@ -40,7 +40,47 @@ function startMessage() {
   jumbotron.show();
 
   var startButton = $("#start-session");
-  startButton.click(startSession);
+  startButton.click(startSession); //starts session
+}
+
+function startSession() {
+  var jumbotron = $('.jumbotron');
+  jumbotron.hide();
+
+  $('.footer-nav').show();
+  playlistMain();
+
+  scriptContainer = $("#script-container");
+  insertScript('d3chart', scriptContainer); //loads d3 brainwave chart
+
+  centerBar = $('.center-bar');
+  centerBar.show();
+
+  leftMessage = $(".hello-message");
+  leftMessage.html("Track your brain waves below");
+
+  socket.emit('readyMessage', 'ready'); //sends message back to server-side that page is ready for data
+}
+
+function loadSessionElements() { //this function loads elements of the main session
+
+  changeBaselineMessage();
+
+  loadSpeedometer();
+
+  loadStopButton();
+
+  setTimer();
+
+  setInterval(checkAbnormal, 1000);
+
+}
+
+function insertScript(script, container) { //this function allows for new js scripts to be added to page (used for 'speedometer.js' and 'd3chart.js')
+    var elem = document.createElement('script');
+    elem.type = 'text/javascript';
+    elem.src = '/static/js/' + script + '.js';
+    container.append(elem);
 }
 
 function showBaselineMessage() {
@@ -65,6 +105,14 @@ function loadSpeedometer(){
   insertScript('speedometer',scriptContainer);
 }
 
+function loadStopButton() {
+
+  var stop = $('#end-session-btn');
+  stop.show();
+
+  stop.click(sendSessionData); //sends data back to DB when the session is over
+}
+
 function setTimer() {
   var timer = $('#timer');
   timer.show();
@@ -78,55 +126,12 @@ function setTimer() {
   }, 1000);
 }
 
-function loadStopButton() {
-
-  var stop = $('#end-session-btn');
-  stop.show();
-
-  stop.click(sendSessionData);
+function saveSessionID(data) {
+  sessionStorage.sessionID = data;
+  console.log(sessionStorage.sessionID);
 }
 
-function loadSessionElements() {
-
-  changeBaselineMessage();
-
-  loadSpeedometer();
-
-  loadStopButton();
-
-  setTimer();
-
-  setInterval(checkAbnormal, 1000);
-
-}
-
-function insertScript(script, container) {
-    var elem = document.createElement('script');
-    elem.type = 'text/javascript';
-    elem.src = '/static/js/' + script + '.js';
-    container.append(elem);
-}
-
-function startSession() {
-  var jumbotron = $('.jumbotron');
-  jumbotron.hide();
-
-  $('.footer-nav').show();
-  playlistMain();
-
-  scriptContainer = $("#script-container");
-  insertScript('d3chart', scriptContainer);
-
-  centerBar = $('.center-bar');
-  centerBar.show();
-
-  leftMessage = $(".hello-message");
-  leftMessage.html("Track your brain waves below");
-
-  socket.emit('readyMessage', 'ready');
-}
-
-function sendSessionData() {
+function sendSessionData() { //sends session data back to server-side
 
   console.log('sending data');
 
@@ -148,26 +153,5 @@ function sendSessionData() {
   }).done(function(data) {
     window.location.replace('/complete');
   }).fail(function() { console.log('failed');} );
-
-}
-
-function saveSessionID(data) {
-  sessionStorage.sessionID = data;
-  console.log(sessionStorage.sessionID);
-}
-
-function connectionMain() {
-
-  var namespace = '/test';
-  socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
-  var duration = 1;
-
-  socket.on('connection status', displayStatus);
-
-  socket.on('first value', startData);
-  
-  socket.on('new value', streamData);
-
-  socket.on('session id', saveSessionID);
 
 }
