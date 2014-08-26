@@ -1,3 +1,5 @@
+# This sets the schema for the MonkeyMind database
+
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import Column, Integer, String, DateTime, Float

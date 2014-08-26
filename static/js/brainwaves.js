@@ -1,4 +1,4 @@
-// this script contains the system for handling brainwave data
+// This script contains the system for handling brainwave data
 
 //initialize variables for state system
 var RAW_EEG_ARRAY = [];

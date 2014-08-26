@@ -151,7 +151,7 @@ function sendSessionData() { //sends session data back to server-side
     url: "/complete",
     data: sessionData,
   }).done(function(data) {
-    window.location.replace('/complete');
+    window.location.replace('/complete'); //loads new page upon success
   }).fail(function() { console.log('failed');} );
 
 }

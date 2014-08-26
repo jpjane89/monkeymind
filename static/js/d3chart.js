@@ -1,4 +1,4 @@
-//this script contains the chart for visualizing brainwave data. It is loaded in 'headset_connection.html' when the session starts
+//This script contains the chart for visualizing brainwave data. It is loaded in 'headset_connection.html' when the session starts
 
 var n = 100;
 chartData = new Array(n+1).join('0').split('').map(parseFloat); //this is where data will be added
