@@ -126,6 +126,23 @@ function setTimer() {
   }, 1000);
 }
 
+function formatTime(ms) {
+  var total_seconds = ms / 1000;
+  var minutes = Math.floor(total_seconds / 60);
+  var seconds = Math.floor(total_seconds % 60);
+
+  if (minutes < 10 && seconds < 10) {
+    return "0" + minutes + ":" + "0" + seconds;
+  }
+  if (minutes < 10 && seconds >= 10) {
+    return "0" + minutes + ":" + seconds;
+  }
+  if (minutes >= 10 && seconds < 10) {
+    return minutes + ":" + "0" + seconds;
+  }
+  return minutes + ":" + seconds;
+ }
+
 function saveSessionID(data) {
   sessionStorage.sessionID = data;
   console.log(sessionStorage.sessionID);
